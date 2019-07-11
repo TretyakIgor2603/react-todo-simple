@@ -1,33 +1,24 @@
 import React from "react";
-import styled, { css } from "styled-components";
+import { List, Icon, Checkbox } from "antd";
 
-const TodoItem = ({ done, title, onToggleDone, onTodoRemove }) => {
-  const TodoWrap = styled.label`
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    line-height: 18px;
-    margin-bottom: 5px;
-  `;
-  const TodoItem = styled.span`
-    user-select: none;
-    ${done &&
-      css`
-        text-decoration: line-through;
-        color: #ccc;
-      `}
-  `;
-  const RemoveTodo = styled.span`
-    font-size: 10px;
-    margin-left: auto;
-  `;
-
+const TodoItem = ({ id, done, title, onToggleDone, onTodoRemove }) => {
   return (
-    <TodoWrap>
-      <input type="checkbox" checked={done} onChange={onToggleDone} />
-      <TodoItem>{title}</TodoItem>
-      <RemoveTodo onClick={onTodoRemove}>Remove</RemoveTodo>
-    </TodoWrap>
+    <List.Item>
+      <Checkbox
+        checked={done}
+        onChange={() => onToggleDone(id)}
+        style={{
+          textDecoration: done ? "line-through" : "none"
+        }}
+      >
+        {title}
+      </Checkbox>
+      <Icon
+        style={{ marginLeft: "auto" }}
+        onClick={() => onTodoRemove(id)}
+        type="delete"
+      />
+    </List.Item>
   );
 };
 

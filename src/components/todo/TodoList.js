@@ -1,28 +1,36 @@
 import React from "react";
 import TodoItem from "../todo/TodoItem";
 import styled from "styled-components";
+import { List } from "antd";
 
 const TodoApp = styled.div`
   display: block;
-  max-width: 221px;
   margin-top: 15px;
 `;
+
+const tasksPerPage = 5
+const paginationSettings = {
+  simple: true,
+  pageSize: tasksPerPage,
+  hideOnSinglePage: true,
+  size: 'small'
+};
 
 const TodoList = ({ tasks, onToggleDone, onTodoRemove }) => {
   return (
     <TodoApp>
-      {tasks.map((task, index) => {
-        const { id, title, done } = task;
-        return (
+      <List
+        bordered
+        dataSource={tasks}
+        pagination={tasks.length > tasksPerPage ? paginationSettings : false}
+        renderItem={item => (
           <TodoItem
-            key={index}
-            title={title}
-            done={done}
-            onToggleDone={() => onToggleDone(id)}
-            onTodoRemove={() => onTodoRemove(id)}
+            {...item}
+            onToggleDone={onToggleDone}
+            onTodoRemove={onTodoRemove}
           />
-        );
-      })}
+        )}
+      />
     </TodoApp>
   );
 };

@@ -1,0 +1,56 @@
+{
+  "tasks": [
+    {
+      "id": "b55cf65d-76e5-4008-ad27-8ceb2529b3b7",
+      "title": "Покормить собаку",
+      "done": false
+    },
+    {
+      "id": "b8091d06-4299-4692-bf25-5e81a725e8cf",
+      "title": "Выгулять кошку",
+      "done": false
+    },
+    {
+      "id": "704538b5-b2f0-45ee-8eff-683c9b4b475c",
+      "title": "Купить хлеба",
+      "done": false
+    },
+    {
+      "id": "f15aae1f-4ca0-4023-a637-1cab1960ee50",
+      "title": "Что-нибудь сделать",
+      "done": false
+    },
+    {
+      "id": "a545985d-b315-40f3-9402-a881971a8b73",
+      "title": "Еще какой-то таск",
+      "done": false
+    },
+    {
+      "id": "4de8f4f0-5767-4ca9-ab65-d864de9d4b02",
+      "title": "Важная задача",
+      "done": false
+    },
+    {
+      "id": "20363177-39c0-458d-b7a3-e008794181a2",
+      "title": "New todo",
+      "done": false
+    }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": "typicode"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  }
+}

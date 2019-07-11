@@ -1,11 +1,27 @@
-import thunk from "redux-thunk";
+import axios from "axios";
 import { createStore, applyMiddleware, combineReducers } from "redux";
-import todoAddReducers from '../components/todo/todoReducers'
+import todoReducer from "./todo/todo-reducer";
+import createSagaMiddleware from "redux-saga";
+import { createRequestInstance, watchRequests } from "redux-saga-requests";
+import { createDriver } from "redux-saga-requests-axios";
+import thunk from "redux-thunk";
 
+function* rootSaga(axiosInstance) {
+  yield createRequestInstance({ driver: createDriver(axiosInstance) });
+  yield watchRequests();
+}
+
+const sagaMiddleware = createSagaMiddleware();
 const rootReducer = combineReducers({
-  todoAdd: todoAddReducers
+  todo: todoReducer
 });
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+const store = createStore(rootReducer, applyMiddleware(sagaMiddleware, thunk));
 
-export default store
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:3004"
+});
+
+sagaMiddleware.run(rootSaga, axiosInstance);
+
+export default store;
