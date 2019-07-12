@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import * as todoActions from "store/todo/todo-actions";
 import Page from "../layouts";
 import styled from "styled-components";
-import ErrorBoundary from "../error-boundary";
+import { ErrorBoundary } from "../error";
 import { Alert } from "antd";
 import SearchPanel from "../UI/SearchPanel";
 
@@ -14,10 +14,20 @@ const TodoWrap = styled.div`
 
 class TodoPage extends React.Component {
   state = {
-    searchTerm: ""
+    searchTerm: "",
+    currentPage: 1,
+    sizePage: 5
   };
 
-  taskAdd = title => this.props.taskAdd(title);
+  taskAdd = title => {
+    const tasksLength = this.props.tasks.length + 1;
+    const lastPage = Math.ceil(tasksLength / this.state.sizePage);
+    this.setPage(lastPage);
+    this.props.addTodo(title);
+  };
+
+  setPage = page => this.setState({ currentPage: page });
+
   searchTasks = searchTerm => this.setState({ searchTerm });
 
   filteredTasks = (tasks, term) => {
@@ -32,17 +42,16 @@ class TodoPage extends React.Component {
   }
 
   render() {
-    const { searchTerm } = this.state;
-    // ? many
-    const { tasks, toggleDoneTodo, addTodo, removeTodo, error } = this.props;
+    const { searchTerm, currentPage, sizePage } = this.state;
+    const { tasks, toggleTodoDone, removeTodo, error } = this.props;
     const visibleTasks = this.filteredTasks(tasks, searchTerm);
 
     return (
       <ErrorBoundary>
         <Page>
           <TodoWrap>
-            <TodoAdd onTodoAdd={addTodo} />
-            {error ? (
+            <TodoAdd onTodoAdd={this.taskAdd} />
+            {error.length ? (
               <Alert
                 style={{ marginTop: "15px" }}
                 message={error}
@@ -52,8 +61,11 @@ class TodoPage extends React.Component {
             ) : (
               <TodoList
                 tasks={visibleTasks}
-                onToggleDone={toggleDoneTodo}
+                currentPage={currentPage}
+                sizePage={sizePage}
+                onToggleDone={toggleTodoDone}
                 onTodoRemove={removeTodo}
+                onChangePaging={this.setPage}
               />
             )}
             {tasks.length ? <SearchPanel onSearch={this.searchTasks} /> : null}
@@ -64,15 +76,7 @@ class TodoPage extends React.Component {
   }
 }
 
-function mapStateToProps({ todo }) {
-  return {
-    tasks: todo.tasks,
-    searchTerm: todo.searchTerm,
-    error: todo.error
-  };
-}
-
 export default connect(
-  mapStateToProps,
+  ({ todo }) => todo,
   { ...todoActions }
 )(TodoPage);

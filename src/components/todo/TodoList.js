@@ -8,21 +8,23 @@ const TodoApp = styled.div`
   margin-top: 15px;
 `;
 
-const tasksPerPage = 5
-const paginationSettings = {
-  simple: true,
-  pageSize: tasksPerPage,
-  hideOnSinglePage: true,
-  size: 'small'
-};
+const TodoList = ({ tasks, currentPage, sizePage, onToggleDone, onTodoRemove, onChangePaging }) => {
 
-const TodoList = ({ tasks, onToggleDone, onTodoRemove }) => {
+  const paginationSettings = {
+    simple: true,
+    pageSize: sizePage,
+    hideOnSinglePage: true,
+    size: 'small',
+    current: currentPage,
+    onChange: onChangePaging
+  };
+
   return (
     <TodoApp>
       <List
         bordered
         dataSource={tasks}
-        pagination={tasks.length > tasksPerPage ? paginationSettings : false}
+        pagination={tasks.length > sizePage ? paginationSettings : false}
         renderItem={item => (
           <TodoItem
             {...item}

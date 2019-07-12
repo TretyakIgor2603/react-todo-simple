@@ -1,13 +1,12 @@
 import React from "react";
-import ErrorIndicator from "../error-indicator";
+import ErrorIndicator from "./ErrorIndicator";
 
 class ErrorBoundary extends React.Component {
   state = {
     error: null
   };
 
-  static getDerivedStateFromError(error) {
-    console.log(error)
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 

@@ -1,4 +1,10 @@
 import styled from 'styled-components'
+import {Button} from 'antd'
+
+const customButton = styled(Button)`
+  color: red;  
+`
+
 
 const Page = styled.div`
   display: flex;

@@ -4,7 +4,7 @@ import { success, error } from "redux-saga-requests";
 const initialState = {
   tasks: [],
   searchTerm: "",
-  error: null
+  error: []
 };
 
 const todoReducer = (state = initialState, action) => {
@@ -15,18 +15,16 @@ const todoReducer = (state = initialState, action) => {
         tasks: [...state.tasks, action.meta.item]
       };
     case error(todoActions.ADD_TODO):
-      console.log(action);
       return {
-        ...state
-        // tasks: [...state.tasks, action.data]
-      };
+        ...state,
+        error: action.error.message
+      }
     case todoActions.FETCH_TASKS:
-      return {
-        ...state
-      };
+      return state;
     case success(todoActions.FETCH_TASKS):
       return {
         ...state,
+        error: [],
         tasks: action.data
       };
     case error(todoActions.FETCH_TASKS):
@@ -34,10 +32,16 @@ const todoReducer = (state = initialState, action) => {
         ...state,
         error: action.error.message
       };
-    case todoActions.TOGGLE_DONE_TODO:
+    case todoActions.TOGGLE_TODO_DONE:
+      const tasks = state.tasks.map(task => {
+        if (task.id === action.meta.id) {
+          task.done = !task.done;
+        }
+        return task;
+      });
       return {
         ...state,
-        tasks: [...state.tasks]
+        tasks: [...tasks]
       };
     case todoActions.REMOVE_TODO:
       return {
