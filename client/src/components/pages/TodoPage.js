@@ -28,23 +28,21 @@ class TodoPage extends React.Component {
 
   setPage = page => this.setState({ currentPage: page });
 
-  searchTasks = searchTerm => this.setState({ searchTerm });
-
-  filteredTasks = (tasks, term) => {
-    if (!term || term.length === 0) {
-      return tasks;
-    }
-    return tasks.filter(task => task.title.toLowerCase().indexOf(term) > -1);
-  };
+  searchTasks = searchTerm => this.props.searchTasks(searchTerm);
 
   componentDidMount() {
     this.props.fetchTasks();
   }
 
   render() {
-    const { searchTerm, currentPage, sizePage } = this.state;
-    const { tasks, toggleTodoDone, removeTodo, error } = this.props;
-    const visibleTasks = this.filteredTasks(tasks, searchTerm);
+    const { currentPage, sizePage } = this.state;
+    const {
+      tasks,
+      toggleTodoDone,
+      removeTodo,
+      error,
+      loadingSearch
+    } = this.props;
 
     return (
       <ErrorBoundary>
@@ -60,7 +58,7 @@ class TodoPage extends React.Component {
               />
             ) : (
               <TodoList
-                tasks={visibleTasks}
+                tasks={tasks}
                 currentPage={currentPage}
                 sizePage={sizePage}
                 onToggleDone={toggleTodoDone}
@@ -68,7 +66,7 @@ class TodoPage extends React.Component {
                 onChangePaging={this.setPage}
               />
             )}
-            {tasks.length ? <SearchPanel onSearch={this.searchTasks} /> : null}
+            <SearchPanel loading={loadingSearch} onSearch={this.searchTasks} />
           </TodoWrap>
         </Page>
       </ErrorBoundary>

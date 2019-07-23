@@ -8,12 +8,19 @@ const TodoApp = styled.div`
   margin-top: 15px;
 `;
 
-const TodoList = ({ tasks, currentPage, sizePage, onToggleDone, onTodoRemove, onChangePaging }) => {
+const TodoList = ({
+  tasks,
+  sizePage,
+  currentPage,
+  onToggleDone,
+  onRemoveTodo,
+  onChangePaging
+}) => {
   const paginationSettings = {
     simple: true,
     pageSize: sizePage,
     hideOnSinglePage: true,
-    size: 'small',
+    size: "small",
     current: currentPage,
     onChange: onChangePaging
   };
@@ -28,7 +35,7 @@ const TodoList = ({ tasks, currentPage, sizePage, onToggleDone, onTodoRemove, on
           <TodoItem
             {...item}
             onToggleDone={onToggleDone}
-            onTodoRemove={onTodoRemove}
+            onRemoveTodo={onRemoveTodo}
           />
         )}
       />

@@ -1,9 +1,14 @@
 import React from "react";
 import { List, Icon, Checkbox } from "antd";
+import styled from "styled-components";
 
-const TodoItem = ({ id, done, title, onToggleDone, onTodoRemove }) => {
+const Item = styled(List.Item)`
+  user-select: none;
+`;
+
+const TodoItem = ({ id, done, title, onToggleDone, onRemoveTodo }) => {
   return (
-    <List.Item>
+    <Item>
       <Checkbox
         checked={done}
         onChange={() => onToggleDone(id)}
@@ -15,10 +20,10 @@ const TodoItem = ({ id, done, title, onToggleDone, onTodoRemove }) => {
       </Checkbox>
       <Icon
         style={{ marginLeft: "auto" }}
-        onClick={() => onTodoRemove(id)}
+        onClick={() => onRemoveTodo(id)}
         type="delete"
       />
-    </List.Item>
+    </Item>
   );
 };
 
