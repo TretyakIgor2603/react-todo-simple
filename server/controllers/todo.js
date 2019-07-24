@@ -13,7 +13,7 @@ const fetchAll = async (req, res) => {
   }
 };
 
-const searchTasks = async (req, res) => {
+const search = async (req, res) => {
   const term = new RegExp(req.params.term);
   try {
     await Task.find({ title: { $regex: term, $options: "i" } }, {})
@@ -55,7 +55,7 @@ const removeById = async (req, res) => {
   }
 };
 
-const toggleTaskDone = async (req, res) => {
+const toggleDone = async (req, res) => {
   try {
     await Task.findById(req.body.id, (err, task) => {
       if (err || !task) {
@@ -72,4 +72,4 @@ const toggleTaskDone = async (req, res) => {
   }
 };
 
-export { fetchAll, create, removeById, toggleTaskDone, searchTasks };
+export { fetchAll, create, removeById, toggleDone, search };
