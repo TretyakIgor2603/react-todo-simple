@@ -1,8 +1,13 @@
 import axios from "axios";
 import { createStore, applyMiddleware, combineReducers } from "redux";
 import todoReducer from "./todo/todo-reducer";
+import errorsReducer from "./errors-reducer";
 import createSagaMiddleware from "redux-saga";
-import { createRequestInstance, watchRequests } from "redux-saga-requests";
+import {
+  createRequestInstance,
+  watchRequests,
+  requestsPromiseMiddleware
+} from "redux-saga-requests";
 import { createDriver } from "redux-saga-requests-axios";
 import thunk from "redux-thunk";
 
@@ -13,10 +18,14 @@ function* rootSaga(axiosInstance) {
 
 const sagaMiddleware = createSagaMiddleware();
 const rootReducer = combineReducers({
-  todo: todoReducer
+  todo: todoReducer,
+  errors: errorsReducer
 });
 
-const store = createStore(rootReducer, applyMiddleware(sagaMiddleware, thunk));
+const store = createStore(
+  rootReducer,
+  applyMiddleware(sagaMiddleware, thunk, requestsPromiseMiddleware())
+);
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:5000/api"

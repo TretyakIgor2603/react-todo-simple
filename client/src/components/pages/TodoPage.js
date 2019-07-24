@@ -19,16 +19,16 @@ class TodoPage extends React.Component {
     sizePage: 5
   };
 
-  taskAdd = title => {
+  taskAdd = async (title) => {
+    await this.props.addTodo(title);
     const tasksLength = this.props.tasks.length + 1;
     const lastPage = Math.ceil(tasksLength / this.state.sizePage);
     this.setPage(lastPage);
-    this.props.addTodo(title);
   };
 
-  setPage = page => this.setState({ currentPage: page });
+  setPage = (page) => this.setState({ currentPage: page });
 
-  searchTasks = searchTerm => this.props.searchTasks(searchTerm);
+  searchTasks = async (searchTerm) => await this.props.searchTasks(searchTerm);
 
   componentDidMount() {
     this.props.fetchTasks();
@@ -62,7 +62,7 @@ class TodoPage extends React.Component {
                 currentPage={currentPage}
                 sizePage={sizePage}
                 onToggleDone={toggleTodoDone}
-                onTodoRemove={removeTodo}
+                onRemoveTodo={removeTodo}
                 onChangePaging={this.setPage}
               />
             )}

@@ -31,7 +31,7 @@ const TodoList = ({
         bordered
         dataSource={tasks}
         pagination={tasks.length > sizePage ? paginationSettings : false}
-        renderItem={item => (
+        renderItem={(item) => (
           <TodoItem
             {...item}
             onToggleDone={onToggleDone}

@@ -8,9 +8,9 @@ export const fetchTasks = () => ({
 });
 
 export const SEARCH_TASKS = "SEARCH_TASKS";
-export const searchTasks = term => {
+export const searchTasks = (term) => {
   if (!term || term.length === 0) {
-    return fetchTasks()
+    return fetchTasks();
   }
   return {
     type: SEARCH_TASKS,
@@ -18,12 +18,15 @@ export const searchTasks = term => {
       url: `/tasks/search/${term}`,
       data: { term },
       method: "get"
+    },
+    meta: {
+      asPromise: true
     }
   };
 };
 
 export const ADD_TODO = "ADD_TODO";
-export const addTodo = title => {
+export const addTodo = (title) => {
   return {
     type: ADD_TODO,
     request: {
@@ -32,16 +35,14 @@ export const addTodo = title => {
       method: "post"
     },
     meta: {
-      title
+      title,
+      asPromise: true
     }
   };
 };
 
-// const item = getState().todo.tasks.find(task => task.id === id);
-// item.done = !item.done;
-
 export const TOGGLE_TODO_DONE = "TOGGLE_TODO_DONE";
-export const toggleTodoDone = id => ({
+export const toggleTodoDone = (id) => ({
   type: TOGGLE_TODO_DONE,
   request: {
     url: `/tasks/toggle/${id}`,
@@ -54,7 +55,7 @@ export const toggleTodoDone = id => ({
 });
 
 export const REMOVE_TODO = "REMOVE_TODO";
-export const removeTodo = id => ({
+export const removeTodo = (id) => ({
   type: REMOVE_TODO,
   request: {
     url: `/tasks/${id}`,
@@ -62,6 +63,7 @@ export const removeTodo = id => ({
     method: "delete"
   },
   meta: {
-    id
+    id,
+    asPromise: true
   }
 });

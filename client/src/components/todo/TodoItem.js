@@ -1,12 +1,21 @@
-import React from "react";
-import { List, Icon, Checkbox } from "antd";
+import React, { useState } from "react";
+import { List, Icon, Checkbox, Spin } from "antd";
 import styled from "styled-components";
 
 const Item = styled(List.Item)`
   user-select: none;
 `;
+const spinIcon = <Icon type="loading" style={{ fontSize: "15px" }} spin />;
 
 const TodoItem = ({ id, done, title, onToggleDone, onRemoveTodo }) => {
+  const [isPending, setPending] = useState(false);
+
+  const handleRemoveTodo = async (id) => {
+    setPending(true);
+    await onRemoveTodo(id).catch((error) => error);
+    setPending(false)
+  };
+
   return (
     <Item>
       <Checkbox
@@ -18,11 +27,15 @@ const TodoItem = ({ id, done, title, onToggleDone, onRemoveTodo }) => {
       >
         {title}
       </Checkbox>
-      <Icon
-        style={{ marginLeft: "auto" }}
-        onClick={() => onRemoveTodo(id)}
-        type="delete"
-      />
+      {isPending ? (
+        <Spin style={{ marginLeft: "auto" }} indicator={spinIcon} />
+      ) : (
+        <Icon
+          style={{ marginLeft: "auto" }}
+          onClick={() => handleRemoveTodo(id)}
+          type="delete"
+        />
+      )}
     </Item>
   );
 };

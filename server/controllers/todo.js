@@ -1,4 +1,5 @@
 import models from "../models";
+import errorHandler from "../utils/errorHandler";
 
 const Task = models.Task;
 
@@ -8,18 +9,18 @@ const fetchAll = async (req, res) => {
       return res.status(200).send({ tasks });
     });
   } catch (error) {
-    console.error(error.message);
+    errorHandler(res, error);
   }
 };
 
 const searchTasks = async (req, res) => {
-  const term = new RegExp(req.params.term)
+  const term = new RegExp(req.params.term);
   try {
-    await Task.find({title: { $regex: term, $options: "i" }}, {})
-      .then(tasks => res.status(200).send({tasks}))
+    await Task.find({ title: { $regex: term, $options: "i" } }, {})
+      .then(tasks => res.status(200).send({ tasks }))
       .catch(e => console.error(e));
   } catch (error) {
-    console.error(error.message);
+    errorHandler(res, error);
   }
 };
 
@@ -27,21 +28,30 @@ const create = async (req, res) => {
   const { title } = req.body;
   try {
     const task = await new Task({ title }).save();
-    return res.status(200).send(task);
+    // Emulation actions
+    setTimeout(() => {
+      return res.status(200).send(task);
+    }, 500);
   } catch (error) {
-    console.error(error.message);
+    errorHandler(res, error);
   }
 };
 
 const removeById = async (req, res) => {
-  try {
-    await Task.findByIdAndRemove(req.body.id);
-    return res.sendStatus(200);
-  } catch (error) {
-    console.error(error.message);
-    return res.status(404).send({
-      message: "Task nod found!"
-    });
+  // Emulation actions
+  if (Math.random() > 0.3) {
+    try {
+      await Task.findByIdAndRemove(req.body.id);
+      setTimeout(() => {
+        return res.sendStatus(200);
+      }, 1000);
+    } catch (error) {
+      errorHandler(res, error, 404);
+    }
+  } else {
+    setTimeout(() => {
+      errorHandler(res, "Could not delete task! Try again.");
+    }, 1000);
   }
 };
 
@@ -58,7 +68,7 @@ const toggleTaskDone = async (req, res) => {
       return res.sendStatus(200);
     });
   } catch (error) {
-    console.error(error.message);
+    errorHandler(res, error);
   }
 };
 
