@@ -10,10 +10,11 @@ const spinIcon = <Icon type="loading" style={{ fontSize: "15px" }} spin />;
 const TodoItem = ({ id, done, title, onToggleDone, onRemoveTodo }) => {
   const [isPending, setPending] = useState(false);
 
-  const handleRemoveTodo = async (id) => {
+  const handleRemoveTodo = (id) => {
     setPending(true);
-    await onRemoveTodo(id).catch((error) => error);
-    setPending(false)
+    onRemoveTodo(id)
+      .then(() => setPending(false))
+      .catch(() => setPending(false));
   };
 
   return (

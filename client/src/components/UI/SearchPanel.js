@@ -12,9 +12,9 @@ const SearchPanel = (props) => {
 
   const onSearchChange = async (e) => {
     setPending(true);
-    await onSearch(e.target.value.toLowerCase()).finally(() =>
-      setPending(false)
-    );
+    await onSearch(e.target.value.toLowerCase())
+      .catch(() => {})
+      .finally(() => setPending(false));
   };
   const spinner = isPending ? <Spin indicator={spinIcon} /> : null;
 

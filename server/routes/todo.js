@@ -1,11 +1,11 @@
 import express from "express";
-import { fetchAll, create, removeById, toggleDone, search } from "../controllers/todo";
+import * as controllers from "../controllers/todo";
 const router = express.Router();
 
-router.get("/", fetchAll);
-router.get("/search/:term", search);
-router.post("/", create);
-router.put("/toggle/:id", toggleDone);
-router.delete("/:id", removeById);
+router.get("/", controllers.fetchAll);
+router.get("/search/:term", controllers.search);
+router.post("/", controllers.create);
+router.put("/toggle/:id", controllers.toggleDone);
+router.delete("/:id", controllers.removeById);
 
 export default router;
