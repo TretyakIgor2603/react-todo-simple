@@ -15,3 +15,13 @@ code {
 .ant-btn .ant-spin-spinning {
   line-height: 1;
 }
+
+.login-form {
+  max-width: 300px;
+}
+.login-form-forgot {
+  float: right;
+}
+.login-form-button {
+  width: 100%;
+}

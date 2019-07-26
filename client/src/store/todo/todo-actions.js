@@ -1,29 +1,32 @@
-export const FETCH_TASKS = "FETCH_TASKS";
-export const fetchTasks = () => ({
-  type: FETCH_TASKS,
-  request: {
-    url: "/tasks",
-    method: "get"
-  }
-});
+import { Base64 } from "js-base64";
 
-export const SEARCH_TASKS = "SEARCH_TASKS";
-export const searchTasks = (term) => {
-  if (!term || term.length === 0) {
-    return fetchTasks();
-  }
+export const FETCH_TASKS = "FETCH_TASKS";
+export const fetchTasks = (term, offset, limit) => {
   return {
-    type: SEARCH_TASKS,
+    type: FETCH_TASKS,
     request: {
-      url: `/tasks/search/${term}`,
-      data: { term },
+      url: `/tasks?search=${Base64.encode(term)}&offset=${offset}&limit=${limit}`,
       method: "get"
     },
     meta: {
       asPromise: true
     }
-  };
-};
+  }
+}
+
+// export const SEARCH_TASKS = "SEARCH_TASKS";
+// export const searchTasks = (term, limit) => {
+//   return {
+//     type: SEARCH_TASKS,
+//     request: {
+//       url: `/tasks?search=${Base64.encode(term)}&limit=${limit}`,
+//       method: "get"
+//     },
+//     meta: {
+//       asPromise: true
+//     }
+//   };
+// };
 
 export const ADD_TODO = "ADD_TODO";
 export const addTodo = (title) => {
@@ -35,17 +38,16 @@ export const addTodo = (title) => {
       method: "post"
     },
     meta: {
-      title,
       asPromise: true
     }
   };
 };
 
 export const TOGGLE_TODO_DONE = "TOGGLE_TODO_DONE";
-export const toggleTodoDone = (id) => ({
+export const toggleDoneTodo = (id) => ({
   type: TOGGLE_TODO_DONE,
   request: {
-    url: `/tasks/toggle/${id}`,
+    url: `/tasks?complete=${id}`,
     data: { id },
     method: "put"
   },
@@ -55,7 +57,7 @@ export const toggleTodoDone = (id) => ({
 });
 
 export const REMOVE_TODO = "REMOVE_TODO";
-export const removeTodo = (id) => ({
+export const removeTask = (id) => ({
   type: REMOVE_TODO,
   request: {
     url: `/tasks/${id}`,

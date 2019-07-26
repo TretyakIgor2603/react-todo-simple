@@ -1,11 +1,10 @@
-import express from "express";
 import * as controllers from "../controllers/todo";
-const router = express.Router();
+import Router from "express-promise-router"
+const router = Router()
 
-router.get("/", controllers.fetchAll);
-router.get("/search/:term", controllers.search);
+router.get("/", controllers.get);
 router.post("/", controllers.create);
-router.put("/toggle/:id", controllers.toggleDone);
-router.delete("/:id", controllers.removeById);
+router.delete("/:id", controllers.remove);
+router.put("/", controllers.update);
 
 export default router;

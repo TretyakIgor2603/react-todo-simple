@@ -2,73 +2,102 @@ import React from "react";
 import { TodoAdd, TodoList } from "../todo";
 import { connect } from "react-redux";
 import * as todoActions from "store/todo/todo-actions";
-import Page from "../layouts";
-import styled from "styled-components";
 import { ErrorBoundary } from "../error";
 import { Alert } from "antd";
 import SearchPanel from "../UI/SearchPanel";
 
-const TodoWrap = styled.div`
-  max-width: 400px;
-`;
+import { Link } from "react-router-dom";
 
 class TodoPage extends React.Component {
   state = {
     searchTerm: "",
     currentPage: 1,
-    sizePage: 5
+    offset: 0,
+    limit: 5
   };
 
+  // this functions need fetch tasks START
   taskAdd = async (title) => {
     await this.props.addTodo(title);
-    const tasksLength = this.props.tasks.length + 1;
-    const lastPage = Math.ceil(tasksLength / this.state.sizePage);
-    this.setPage(lastPage);
+    await this.fetchTasks(
+      this.state.searchTerm,
+      this.state.offset,
+      this.state.limit
+    );
   };
 
-  setPage = (page) => this.setState({ currentPage: page });
+  setPage = (page) => {
+    const { searchTerm, limit } = this.state;
+    const newOffset = page * limit - limit;
+    this.fetchTasks(searchTerm, newOffset, limit);
 
-  searchTasks = async (searchTerm) => await this.props.searchTasks(searchTerm);
+    this.setState({
+      currentPage: page,
+      offset: newOffset
+    });
+  };
+
+  searchTasks = async (searchTerm) => {
+    this.setState({ searchTerm, currentPage: 1 });
+    await this.fetchTasks(searchTerm, 0, this.state.limit);
+  };
+
+  removeTask = async (id) => {
+    await this.props.removeTask(id);
+    await this.fetchTasks(
+      this.state.searchTerm,
+      this.state.offset,
+      this.state.limit
+    );
+  };
+  // this functions need fetch tasks END
+
+  // Get tasks function
+  fetchTasks = async (searchTerm, offset, limit) => {
+    await this.props.fetchTasks(searchTerm, offset, limit);
+  };
 
   componentDidMount() {
-    this.props.fetchTasks();
+    this.fetchTasks(this.state.searchTerm, this.state.offset, this.state.limit);
+  }
+
+  // ????
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.searchTerm !== prevState.searchTerm) {
+      this.fetchTasks(
+        this.state.searchTerm,
+        this.state.offset,
+        this.state.limit
+      );
+    }
   }
 
   render() {
-    const { currentPage, sizePage } = this.state;
-    const {
-      tasks,
-      toggleTodoDone,
-      removeTodo,
-      error,
-      loadingSearch
-    } = this.props;
+    const { currentPage, limit } = this.state;
+    const { tasks, totalTasks, toggleDoneTodo, error } = this.props;
 
     return (
       <ErrorBoundary>
-        <Page>
-          <TodoWrap>
-            <TodoAdd onTodoAdd={this.taskAdd} />
-            {error.length ? (
-              <Alert
-                style={{ marginTop: "15px" }}
-                message={error}
-                type="error"
-                showIcon
-              />
-            ) : (
-              <TodoList
-                tasks={tasks}
-                currentPage={currentPage}
-                sizePage={sizePage}
-                onToggleDone={toggleTodoDone}
-                onRemoveTodo={removeTodo}
-                onChangePaging={this.setPage}
-              />
-            )}
-            <SearchPanel loading={loadingSearch} onSearch={this.searchTasks} />
-          </TodoWrap>
-        </Page>
+        <TodoAdd onTodoAdd={this.taskAdd} />
+        <SearchPanel onSearch={this.searchTasks} />
+        {error.length ? (
+          <Alert
+            style={{ marginTop: "15px" }}
+            message={error}
+            type="error"
+            showIcon
+          />
+        ) : (
+          <TodoList
+            tasks={tasks}
+            tasksPerPage={limit}
+            totalTasks={totalTasks}
+            currentPage={currentPage}
+            onToggleDone={toggleDoneTodo}
+            onRemoveTodo={this.removeTask}
+            onChangePaging={this.setPage}
+          />
+        )}
       </ErrorBoundary>
     );
   }

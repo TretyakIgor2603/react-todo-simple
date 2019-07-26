@@ -1,0 +1,20 @@
+{
+  "name": "react-todo-simple",
+  "version": "1.0.0",
+  "description": "<h1>My full-stack project - Todo List</h1>",
+  "main": "index.js",
+  "scripts": {
+    "server": "cd server && yarn server",
+    "client": "cd client && yarn start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/h1tan/react-todo-simple.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/h1tan/react-todo-simple/issues"
+  },
+  "homepage": "https://github.com/h1tan/react-todo-simple#readme"
+}

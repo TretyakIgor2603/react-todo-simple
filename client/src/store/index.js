@@ -1,7 +1,7 @@
 import axios from "axios";
 import { createStore, applyMiddleware, combineReducers } from "redux";
 import todoReducer from "./todo/todo-reducer";
-import errorsReducer from "./errors-reducer";
+import errorsReducer from "./errors-notification/errors-reducer";
 import createSagaMiddleware from "redux-saga";
 import {
   createRequestInstance,

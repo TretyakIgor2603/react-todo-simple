@@ -2,16 +2,28 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-const taskSchema = new Schema({
-  title: {
-    type: String,
-    required: true
+const taskSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true
+    },
+    done: {
+      type: Boolean,
+      default: false
+    },
+    date: {
+      type: Date,
+      default: Date.now
+    }
   },
-  done: {
-    type: Boolean,
-    default: false
-  }
+  { versionKey: false }
+);
+
+taskSchema.virtual("id").get(function() {
+  return this._id.toHexString();
 });
+taskSchema.set("toJSON", { virtuals: true });
 
 const Task = mongoose.model("Task", taskSchema);
 

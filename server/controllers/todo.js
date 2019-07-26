@@ -1,38 +1,64 @@
 import models from "../models";
+import { Base64 } from "js-base64";
 
 const { Task } = models;
 
-export const fetchAll = async (req, res) => {
-  const tasks = await Task.find();
-  return res.status(200).send({ tasks });
+// get
+// create
+// update
+// delete
+
+export const get = async (req, res) => {
+  const query = {};
+  const searchTerm = req.query.search;
+
+  const count = await Task.countDocuments()
+  let totalTasks = count
+
+
+  if (searchTerm) {
+    const term = new RegExp(Base64.decode(searchTerm));
+    query.title = { $regex: term, $options: "i" };
+
+    const results = await Task.find(query)
+    totalTasks = results.length;
+  }
+
+  Task.find(query)
+    .skip(+req.query.offset)
+    .limit(+req.query.limit)
+    .sort({date:-1})
+    .then(tasks =>
+      res.status(200).send({
+        tasks: {
+          data: tasks,
+          allLength: totalTasks
+        }
+      })
+    );
 };
 
-export const search = async (req, res) => {
-  const term = new RegExp(req.params.term);
-  const tasks = await Task.find({ title: { $regex: term, $options: "i" } }, {});
-  res.status(200).send({ tasks });
-};
-
-export const create = async (req, res) => {
+export const create = (req, res) => {
   const { title } = req.body;
-  const task = await new Task({ title }).save();
-  return res.status(200).send(task);
+  new Task({ title }).save().then(task => res.status(200).send(task));
 };
 
-export const removeById = async (req, res) => {
-  await Task.findByIdAndRemove(req.body.id);
-  return res.sendStatus(200);
+export const update = (req, res) => {
+  if (req.query.complete) {
+    Task.findById(req.body.id, (err, task) => {
+      if (err) {
+        return res.status(404).send({
+          message: "Todo was not found!"
+        });
+      } else {
+        task.done = !task.done;
+        task.save().then(() => res.sendStatus(200));
+      }
+    });
+  }
 };
 
-export const toggleDone = async (req, res) => {
-  await Task.findById(req.body.id, (err, task) => {
-    if (err || !task) {
-      return res.status(404).send({
-        message: "Task nod found!"
-      });
-    }
-    task.done = !task.done;
-    task.save();
-    return res.sendStatus(200);
-  });
+// how remove multiple items ?
+export const remove = (req, res) => {
+  Task.findByIdAndRemove(req.body.id).then(() => res.sendStatus(200));
 };

@@ -3,16 +3,8 @@ import { success } from "redux-saga-requests";
 
 const initialState = {
   tasks: [],
-  searchTerm: "",
-  error: []
-};
-
-const transformIdTask = (tasks) => {
-  return tasks.map((task) => {
-    task.id = task._id;
-    delete task._id;
-    return task;
-  });
+  error: [],
+  searchTerm: ""
 };
 
 const todoReducer = (state = initialState, action) => {
@@ -20,26 +12,17 @@ const todoReducer = (state = initialState, action) => {
     case success(todoActions.ADD_TODO):
       return {
         ...state,
-        tasks: [...state.tasks, ...transformIdTask([action.data])]
+        tasks: [action.data, ...state.tasks]
       };
-    case todoActions.FETCH_TASKS:
-      return state;
+
     case success(todoActions.FETCH_TASKS):
       return {
         ...state,
         error: [],
-        tasks: transformIdTask(action.data.tasks)
+        tasks: action.data.tasks.data,
+        totalTasks: action.data.tasks.allLength
       };
-    case todoActions.SEARCH_TASKS:
-      return {
-        ...state
-      };
-    case success(todoActions.SEARCH_TASKS):
-      return {
-        ...state,
-        error: [],
-        tasks: transformIdTask(action.data.tasks)
-      };
+
     case todoActions.TOGGLE_TODO_DONE:
       const tasks = state.tasks.map((task) => {
         if (task.id === action.meta.id) {
@@ -49,13 +32,15 @@ const todoReducer = (state = initialState, action) => {
       });
       return {
         ...state,
-        tasks: [...tasks]
+        tasks
       };
+
     case success(todoActions.REMOVE_TODO):
       return {
         ...state,
         tasks: state.tasks.filter((task) => task.id !== action.meta.id)
       };
+      
     default:
       return state;
   }
