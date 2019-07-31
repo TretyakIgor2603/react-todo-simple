@@ -16,15 +16,14 @@ const Paging = styled(Pagination)`
 
 const TodoList = ({
   tasks,
-  totalTasks,
-  tasksPerPage,
+  total,
+  limit,
   currentPage,
   onToggleDone,
   onRemoveTodo,
   onChangePaging
 }) => {
   const onChange = (page) => onChangePaging(page);
-
   return (
     <TodoApp>
       <List
@@ -43,8 +42,8 @@ const TodoList = ({
         defaultCurrent={1}
         current={currentPage}
         onChange={onChange}
-        total={totalTasks}
-        pageSize={tasksPerPage}
+        total={total}
+        pageSize={limit}
       />
     </TodoApp>
   );

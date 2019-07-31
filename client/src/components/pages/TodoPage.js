@@ -6,79 +6,41 @@ import { ErrorBoundary } from "../error";
 import { Alert } from "antd";
 import SearchPanel from "../UI/SearchPanel";
 
-import { Link } from "react-router-dom";
-
 class TodoPage extends React.Component {
-  state = {
-    searchTerm: "",
-    currentPage: 1,
-    offset: 0,
-    limit: 5
-  };
-
-  // this functions need fetch tasks START
-  taskAdd = async (title) => {
-    await this.props.addTodo(title);
-    await this.fetchTasks(
-      this.state.searchTerm,
-      this.state.offset,
-      this.state.limit
-    );
-  };
-
-  setPage = (page) => {
-    const { searchTerm, limit } = this.state;
-    const newOffset = page * limit - limit;
-    this.fetchTasks(searchTerm, newOffset, limit);
-
-    this.setState({
-      currentPage: page,
-      offset: newOffset
-    });
-  };
-
-  searchTasks = async (searchTerm) => {
-    this.setState({ searchTerm, currentPage: 1 });
-    await this.fetchTasks(searchTerm, 0, this.state.limit);
+  addTask = async (title) => {
+    await this.props.addTaskAndFetch(title);
   };
 
   removeTask = async (id) => {
-    await this.props.removeTask(id);
-    await this.fetchTasks(
-      this.state.searchTerm,
-      this.state.offset,
-      this.state.limit
-    );
+    await this.props.removeTaskAndFetch(id);
   };
-  // this functions need fetch tasks END
-
-  // Get tasks function
-  fetchTasks = async (searchTerm, offset, limit) => {
-    await this.props.fetchTasks(searchTerm, offset, limit);
+  
+  searchTasks = async (searchTerm) => {
+    await this.props.fetchTasks(0, this.props.limit, searchTerm);
   };
+  
+  setPage = (page) => {
+    const { limit } = this.props;
+    const newOffset = page * limit - limit;
+    this.props.setPaginationAndFetch(newOffset);
+  };
+  
+  getCurrentPage = (offset, limit) => offset / limit + 1;
 
   componentDidMount() {
-    this.fetchTasks(this.state.searchTerm, this.state.offset, this.state.limit);
-  }
-
-  // ????
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.searchTerm !== prevState.searchTerm) {
-      this.fetchTasks(
-        this.state.searchTerm,
-        this.state.offset,
-        this.state.limit
-      );
-    }
+    this.props.fetchTasks(
+      this.props.offset,
+      this.props.limit,
+      this.props.searchTerm
+    );
   }
 
   render() {
-    const { currentPage, limit } = this.state;
-    const { tasks, totalTasks, toggleDoneTodo, error } = this.props;
+    const { tasks, total, offset, limit, toggleDoneTask, error } = this.props;
 
     return (
       <ErrorBoundary>
-        <TodoAdd onTodoAdd={this.taskAdd} />
+        <TodoAdd onTodoAdd={this.addTask} />
         <SearchPanel onSearch={this.searchTasks} />
         {error.length ? (
           <Alert
@@ -90,10 +52,10 @@ class TodoPage extends React.Component {
         ) : (
           <TodoList
             tasks={tasks}
-            tasksPerPage={limit}
-            totalTasks={totalTasks}
-            currentPage={currentPage}
-            onToggleDone={toggleDoneTodo}
+            limit={limit}
+            total={total}
+            currentPage={this.getCurrentPage(offset, limit)}
+            onToggleDone={toggleDoneTask}
             onRemoveTodo={this.removeTask}
             onChangePaging={this.setPage}
           />

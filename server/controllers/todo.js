@@ -3,36 +3,24 @@ import { Base64 } from "js-base64";
 
 const { Task } = models;
 
-// get
-// create
-// update
-// delete
-
 export const get = async (req, res) => {
-  const query = {};
   const searchTerm = req.query.search;
-
-  const count = await Task.countDocuments()
-  let totalTasks = count
-
-
-  if (searchTerm) {
-    const term = new RegExp(Base64.decode(searchTerm));
-    query.title = { $regex: term, $options: "i" };
-
-    const results = await Task.find(query)
-    totalTasks = results.length;
-  }
+  const query = {};
+  query.title = {
+    $regex: new RegExp(Base64.decode(searchTerm)),
+    $options: "i"
+  };
+  const tasksTotal = await Task.countDocuments(query);
 
   Task.find(query)
     .skip(+req.query.offset)
     .limit(+req.query.limit)
-    .sort({date:-1})
-    .then(tasks =>
+    .sort({ date: -1 })
+    .then(async tasks =>
       res.status(200).send({
         tasks: {
           data: tasks,
-          allLength: totalTasks
+          total: tasksTotal
         }
       })
     );
