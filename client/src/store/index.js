@@ -1,6 +1,7 @@
 import axios from "axios";
 import { createStore, applyMiddleware, combineReducers } from "redux";
-import todoReducer from "./todo/todo-reducer";
+import todoReducer from "./todo/reducer";
+import authReducer from "./auth/reducer";
 import errorsReducer from "./errors-notification/errors-reducer";
 import createSagaMiddleware from "redux-saga";
 import {
@@ -19,6 +20,7 @@ function* rootSaga(axiosInstance) {
 const sagaMiddleware = createSagaMiddleware();
 const rootReducer = combineReducers({
   todo: todoReducer,
+  auth: authReducer,
   errors: errorsReducer
 });
 

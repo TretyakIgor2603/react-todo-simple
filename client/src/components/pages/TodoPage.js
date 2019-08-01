@@ -1,7 +1,7 @@
 import React from "react";
 import { TodoAdd, TodoList } from "../todo";
 import { connect } from "react-redux";
-import * as todoActions from "store/todo/todo-actions";
+import * as todoActions from "store/todo/actions";
 import { ErrorBoundary } from "../error";
 import { Alert } from "antd";
 import SearchPanel from "../UI/SearchPanel";

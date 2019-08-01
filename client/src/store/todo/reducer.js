@@ -1,4 +1,4 @@
-import * as todoActions from "./todo-actions";
+import * as todoActions from "./actions";
 import { success } from "redux-saga-requests";
 
 const initialState = {

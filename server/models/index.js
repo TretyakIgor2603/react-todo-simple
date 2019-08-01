@@ -1,5 +1,6 @@
-import Task from "./task";
+import Task from "./Task";
+import User from "./User";
 
-const models = { Task };
+const models = { Task, User };
 
 export default models;
