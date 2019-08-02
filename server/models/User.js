@@ -40,13 +40,10 @@ const userSchema = new Schema(
           required: true
         }
       }
-    ],
-    created: {
-      type: Date,
-      default: Date.now
-    }
+    ]
   },
-  { versionKey: false }
+  { versionKey: false },
+  { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );
 
 userSchema.pre("save", async function(next) {
@@ -73,7 +70,7 @@ userSchema.methods.generateAuthToken = async function() {
     { expiresIn: 60 * 60 * 12 }
   );
   user.tokens = user.tokens.concat({ token });
-  console.log(user)
+  console.log(user);
   await user.save();
   return `Bearer ${token}`;
 };

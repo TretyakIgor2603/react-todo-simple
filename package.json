@@ -4,6 +4,7 @@
   "description": "<h1>My full-stack project - Todo List</h1>",
   "main": "index.js",
   "scripts": {
+    "dev": "concurrently \"yarn server\" \"yarn client\"",
     "server": "cd server && yarn server",
     "client": "cd client && yarn start"
   },
@@ -16,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/h1tan/react-todo-simple/issues"
   },
-  "homepage": "https://github.com/h1tan/react-todo-simple#readme"
+  "homepage": "https://github.com/h1tan/react-todo-simple#readme",
+  "dependencies": {
+    "concurrently": "^4.1.1"
+  }
 }

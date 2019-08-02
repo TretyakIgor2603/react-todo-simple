@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { notification } from "antd";
 
-const openNotification = (error) => {
+const openNotification = (title = "Error notification", errors = []) => {
+  const errorsList = errors.map((error, index) => <p key={index}>{error.message ? error.message : error.msg}</p>)
   const args = {
-    message: "Error notification",
-    description: error,
+    message: title,
+    description: errorsList,
     duration: 5
   };
   notification.error(args);
@@ -13,12 +14,15 @@ const openNotification = (error) => {
 
 class Notification extends Component {
   componentDidUpdate() {
-    const error = this.props.errors.message;
-    if (error) openNotification(error);
+    console.log('1')
+    const { errors } = this.props
+    console.log(errors)
+    openNotification(errors.message, errors.errors)
   }
 
   render() {
-    return <></>;
+    console.log('render')
+    return null;
   }
 }
 

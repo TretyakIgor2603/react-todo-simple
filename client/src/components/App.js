@@ -8,7 +8,7 @@ import { fetchUsers } from "../store/auth/actions";
 
 class App extends React.Component {
   componentDidMount() {
-    this.props.fetchUsers();
+    // this.props.fetchUsers();
   }
 
   render() {

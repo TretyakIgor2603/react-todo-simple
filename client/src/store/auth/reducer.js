@@ -22,10 +22,10 @@ const authReducer = (state = initialState, action) => {
         user: action.data
       };
     case success(authActions.SIGN_IN):
-      console.log(action.data)
-      localStorage.setItem('token', action.data.token);
-      return {...state}
-      
+      console.log(action.data);
+      localStorage.setItem("token", action.data.token);
+      return { ...state };
+
     default:
       return state;
   }

@@ -1,5 +1,5 @@
 import * as controllers from "../controllers/user";
-const auth = require("../middleware/auth");
+import auth from "../middleware/auth";
 import Router from "express-promise-router";
 const router = Router();
 

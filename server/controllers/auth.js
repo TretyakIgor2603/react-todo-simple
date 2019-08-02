@@ -1,9 +1,25 @@
 import models from "../models";
+import { body, validationResult } from "express-validator/check";
 
 const { User } = models;
 
+export const validate = method => {
+  switch (method) {
+    case "login": {
+      return [
+        body("email")
+          .if(body('email').exists())
+            .isEmail()
+            .withMessage("Email not valid"),
+        body("password")
+          .exists()
+          .withMessage("Password is required")
+      ];
+    }
+  }
+};
+
 export const userExist = async (req, res) => {
-  console.log(req.body.email);
   const candidate = await User.findOne({ email: req.body.email });
   if (candidate) {
     // Пользователь существует, ошибка!
@@ -35,18 +51,23 @@ export const register = async function(req, res) {
 };
 
 export const login = async function(req, res) {
-  const { email, password } = req.body;
-  const candidate = await User.findOne({ email });
-
-  if (candidate) {
-    const comparePasswords = candidate.comparePassword(password);
-
-    if (comparePasswords) {
-      res.status(200).send({ token: await candidate.generateAuthToken() });
-    } else {
-      res.status(401).send({ message: "Wrong password!" });
+  try {
+    const errors = validationResult(req);
+    console.log(errors)
+    if (errors || errors.length) {
+      console.log('ERRORRR')
+      throw errors.errors;
     }
-  } else {
-    res.status(404).send({ message: "The user is not found!" });
+    console.log('object')
+    const { email, password } = req.body;
+    const user = await User.findOne({ email }).exec();
+    if (user === null) throw "User not found";
+
+    let comparePasswords = await user.comparePassword(password);
+    if (!comparePasswords) throw "Wrong password!";
+
+    res.status(200).send({ token: await user.generateAuthToken() });
+  } catch (errors) {
+    res.status(401).send({ message: "Invalid credentials", errors });
   }
 };
