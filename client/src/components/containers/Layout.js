@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import { Row, Col } from "antd";
+import { connect } from "react-redux";
 
 const Main = styled.div`
   display: flex;
@@ -24,16 +25,16 @@ const Nav = styled.ul`
   li {
     display: inline-block;
     text-align: center;
-		flex: 1;
-		border-right: 1px solid #ddd;
-		transition: border-color .25s ease;
+    flex: 1;
+    border-right: 1px solid #ddd;
+    transition: border-color 0.25s ease;
     &:last-child {
-			margin-right: 0;
-			border-right: none;
+      margin-right: 0;
+      border-right: none;
     }
-		&:hover {
-			border-color: #fff;
-		}
+    &:hover {
+      border-color: #fff;
+    }
     a {
       display: block;
       padding: 5px 10px;
@@ -48,6 +49,8 @@ const Nav = styled.ul`
 `;
 
 const Layout = (props) => {
+  const { auth } = props;
+  console.log(auth)
   return (
     <Main>
       <Row>
@@ -58,16 +61,33 @@ const Layout = (props) => {
                 Tasks
               </NavLink>
             </li>
-            <li>
-              <NavLink to="/signup" exact={false}>
-                SignUp
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/login" exact={false}>
-                Login
-              </NavLink>
-            </li>
+            {auth.isAuthenticated ? (
+              <>
+                <li>
+                  <NavLink to="/profile" exact={false}>
+                    Profile
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/logout" exact={false}>
+                    Logout
+                  </NavLink>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <NavLink to="/signup" exact={false}>
+                    SignUp
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/login" exact={false}>
+                    Login
+                  </NavLink>
+                </li>
+              </>
+            )}
           </Nav>
           {props.children}
         </Col>
@@ -76,4 +96,4 @@ const Layout = (props) => {
   );
 };
 
-export default Layout;
+export default connect((auth) => auth)(Layout);

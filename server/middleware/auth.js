@@ -4,7 +4,14 @@ import models from "../models";
 const { User } = models;
 
 const auth = async (req, res, next) => {
-  const token = req.header("Authorization").replace("Bearer ", "");
+  let token = req.header("Authorization");
+  if (token) {
+    token = token.replace("Bearer ", "");
+  } else {
+    return res
+      .status(401)
+      .send({ message: "Access denied. No token provided." });
+  }
 
   try {
     const data = jwt.verify(token, process.env.JWT_KEY);
@@ -17,7 +24,7 @@ const auth = async (req, res, next) => {
       req.token = token;
       next();
     } catch (error) {
-      res.status(401).send({ error: "Not authorized to access this resource" });
+      res.status(401).send({ message: "Not authorized to access this resource. Log in again!" });
     }
   } catch (error) {
     if (error.name === "TokenExpiredError") {

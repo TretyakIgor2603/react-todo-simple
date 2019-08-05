@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Form, Icon, Input, Button, Checkbox } from "antd";
 import { Link } from "react-router-dom";
-import { signIn } from "../../store/auth/actions";
+import { signInAndLogin } from "../../store/auth/actions";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
@@ -10,8 +10,8 @@ class SignIn extends Component {
     e.preventDefault();
     this.props.form.validateFields(async (err, values) => {
       if (!err) {
-        await this.props.signIn(values);
-        // this.props.form.resetFields();
+        await this.props.signInAndLogin(values);
+        this.props.form.resetFields();
       }
     });
   };
@@ -66,11 +66,11 @@ class SignIn extends Component {
 
 const WrappedSignIn = Form.create({ name: "sign_in" })(SignIn);
 
-const mapActionsToProps = (dispatch) => ({
-  signIn: (data) => dispatch(signIn(data))
+const mapDispatchToProps = (dispatch) => ({
+  signInAndLogin: (data) => dispatch(signInAndLogin(data))
 });
 
 export default connect(
   ({ auth }) => auth,
-  mapActionsToProps
+  mapDispatchToProps
 )(withRouter(WrappedSignIn));

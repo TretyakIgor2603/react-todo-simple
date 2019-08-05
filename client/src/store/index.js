@@ -2,7 +2,7 @@ import axios from "axios";
 import { createStore, applyMiddleware, combineReducers } from "redux";
 import todoReducer from "./todo/reducer";
 import authReducer from "./auth/reducer";
-import errorsReducer from "../store/errors/reducer";
+import noticeReducer from "./notice/notice-reducer";
 import createSagaMiddleware from "redux-saga";
 import {
   createRequestInstance,
@@ -21,7 +21,7 @@ const sagaMiddleware = createSagaMiddleware();
 const rootReducer = combineReducers({
   todo: todoReducer,
   auth: authReducer,
-  errors: errorsReducer
+  notice: noticeReducer
 });
 
 const store = createStore(

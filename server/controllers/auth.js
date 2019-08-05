@@ -8,9 +8,9 @@ export const validate = method => {
     case "login": {
       return [
         body("email")
-          .if(body('email').exists())
-            .isEmail()
-            .withMessage("Email not valid"),
+          .if(body("email").exists())
+          .isEmail()
+          .withMessage("Email not valid"),
         body("password")
           .exists()
           .withMessage("Password is required")
@@ -22,7 +22,6 @@ export const validate = method => {
 export const userExist = async (req, res) => {
   const candidate = await User.findOne({ email: req.body.email });
   if (candidate) {
-    // Пользователь существует, ошибка!
     res.status(409).send({
       message: "Email is already exist!"
     });
@@ -52,13 +51,10 @@ export const register = async function(req, res) {
 
 export const login = async function(req, res) {
   try {
-    const errors = validationResult(req);
-    console.log(errors)
-    if (errors || errors.length) {
-      console.log('ERRORRR')
+    const { errors } = validationResult(req);
+    if (errors && errors.length) {
       throw errors.errors;
     }
-    console.log('object')
     const { email, password } = req.body;
     const user = await User.findOne({ email }).exec();
     if (user === null) throw "User not found";
@@ -70,4 +66,12 @@ export const login = async function(req, res) {
   } catch (errors) {
     res.status(401).send({ message: "Invalid credentials", errors });
   }
+};
+
+export const logout = async function(req, res) {
+  req.user.tokens = req.user.tokens.filter(token => {
+    return token.token != req.token;
+  });
+  await req.user.save();
+  res.status(200).send({ message: "You have been successfully logged out." });
 };

@@ -16,7 +16,7 @@ class TodoPage extends React.Component {
   };
   
   searchTasks = async (searchTerm) => {
-    await this.props.fetchTasks(0, this.props.limit, searchTerm);
+    await this.props.getTasks(0, this.props.limit, searchTerm);
   };
   
   setPage = (page) => {
@@ -28,7 +28,7 @@ class TodoPage extends React.Component {
   getCurrentPage = (offset, limit) => offset / limit + 1;
 
   componentDidMount() {
-    this.props.fetchTasks(
+    this.props.getTasks(
       this.props.offset,
       this.props.limit,
       this.props.searchTerm

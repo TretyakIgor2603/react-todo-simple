@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Form, Icon, Input, Button, Tooltip, Checkbox } from "antd";
 import { connect } from "react-redux";
-import { checkExistEmail, signUp } from "../../store/auth/actions";
+import { checkExistEmail, signUpAndLogin } from "../../store/auth/actions";
 import { withRouter } from "react-router-dom";
 
 class SignUp extends Component {
@@ -14,7 +14,7 @@ class SignUp extends Component {
     const { history } = this.props;
     this.props.form.validateFields(async (err, values) => {
       if (!err) {
-        await this.props.signUp(values);
+        await this.props.signUpAndLogin(values, values.autoLogin);
         this.props.form.resetFields();
         values.autoLogin ? history.push("/") : history.push("/login");
       }
@@ -155,7 +155,7 @@ const WrappedSignUp = Form.create({ name: "sign_up" })(SignUp);
 
 const mapActionsToProps = (dispatch) => ({
   checkExistEmail: (email) => dispatch(checkExistEmail(email)),
-  signUp: (user) => dispatch(signUp(user))
+  signUpAndLogin: (user, autoLogin) => dispatch(signUpAndLogin(user, autoLogin))
 });
 
 export default connect(

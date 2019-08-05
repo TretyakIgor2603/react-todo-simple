@@ -7,9 +7,9 @@ import { connect } from "react-redux";
 import { checkToken } from "../store/auth/actions";
 
 class App extends React.Component {
-  componentDidMount() {
-    this.props.checkToken();
-  }
+  // componentDidMount() {
+  //   this.props.checkToken();
+  // }
 
   render() {
     return (

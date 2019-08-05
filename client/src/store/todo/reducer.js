@@ -27,6 +27,15 @@ const todoReducer = (state = initialState, action) => {
         total: action.data.tasks.total
       };
 
+    case todoActions.GET_LOCAL_TASKS:
+      return {
+        ...state,
+        error: [],
+        searchTerm: action.meta.term,
+        tasks: action.payload.tasks,
+        total: action.payload.total
+      };
+
     case todoActions.TOGGLE_DONE_TASK:
       return {
         ...state,

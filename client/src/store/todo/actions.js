@@ -1,12 +1,18 @@
 import { Base64 } from "js-base64";
+import { getToken } from "../auth/actions";
 
 export const FETCH_TASKS = "FETCH_TASKS";
-export const fetchTasks = (offset = 0, limit = 5, term = "") => {
+export const fetchTasks = (offset = 0, limit = 5, term = "", token) => {
   return {
     type: FETCH_TASKS,
     request: {
-      url: `/tasks?offset=${offset}&limit=${limit}&search=${Base64.encode(term)}`,
-      method: "get"
+      url: `/tasks?offset=${offset}&limit=${limit}&search=${Base64.encode(
+        term
+      )}`,
+      method: "get",
+      headers: {
+        Authorization: token
+      }
     },
     meta: {
       term,
@@ -15,19 +21,57 @@ export const fetchTasks = (offset = 0, limit = 5, term = "") => {
   };
 };
 
-export const ADD_TASK = "ADD_TASK";
-export const addTask = (title) => {
+export const GET_LOCAL_TASKS = "GET_LOCAL_TASKS";
+export const getLocalTasks = (offset, limit, term) => {
+  const tasks = [JSON.parse(localStorage.getItem("tasks"))];
+  console.log(tasks);
+
+  // логика поиска и фильтрации
+
   return {
-    type: ADD_TASK,
-    request: {
-      url: "/tasks",
-      data: { title },
-      method: "post"
-    },
+    type: GET_LOCAL_TASKS,
+    payload: { tasks, total: tasks.length },
     meta: {
-      asPromise: true
+      term
     }
   };
+};
+
+export const getTasks = (offset, limit, term) => {
+  return async (dispatch, getState) => {
+    const token = getToken();
+    if (token) {
+      await dispatch(fetchTasks(offset, limit, term, token));
+    } else {
+      await dispatch(getLocalTasks(offset, limit, term));
+    }
+  };
+};
+
+export const ADD_TASK = "ADD_TASK";
+export const addTask = (title) => {
+  const token = getToken();
+    if (token) {
+      return {
+        type: ADD_TASK,
+        request: {
+          url: "/tasks",
+          data: { title },
+          method: "post",
+          headers: {
+            Authorization: token
+          }
+        },
+        meta: {
+          asPromise: true
+        }
+      };
+    } else {
+      const tasks = [JSON.parse(localStorage.getItem("tasks"))];
+      tasks.push({id: Base64.encode(title), title, done: false})
+      localStorage.setItem('tasks', JSON.stringify(tasks))
+    }
+  
 };
 
 export const ADD_TASK_AND_FETCH = "ADD_TASK_AND_FETCH";

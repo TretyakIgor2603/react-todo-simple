@@ -1,28 +1,37 @@
 import React from "react";
 import TodoPage from "./pages/TodoPage";
-import { Route, Switch, withRouter } from "react-router-dom";
+import { Route, Switch, withRouter, Link, Redirect } from "react-router-dom";
 import PrivateRoute from "./hoc/PrivateRoute";
 import SignUpPage from "./pages/SignupPage";
 import SignInPage from "./pages/SigninPage";
+import SignOutPage from "./pages/SignOutPage";
 import ProfilePage from "./pages/ProfilePage";
-import { connect } from "react-redux";
+import PublicRoute from "./hoc/PublicRoute";
 
-const Navigation = ({ auth }) => {
+const Navigation = () => {
   return (
     <Switch>
       <Route path="/" exact component={TodoPage} />
+      <Route path="/logout" component={SignOutPage} />
+
+      <PublicRoute path="/signup" component={SignUpPage} />
+      <PublicRoute path="/login" component={SignInPage} />
       <PrivateRoute exact path="/profile" component={ProfilePage} />
-      {auth.isAuthenticated ? (
-        <Route path="/logout" component={SignInPage} />
-      ) : (
-        <>
-          <Route path="/signup" component={SignUpPage} />
-          <Route path="/login" component={SignInPage} />
-        </>
-      )}
-      <Route render={() => <h1>404</h1>} />
+
+      <Route
+        render={() => (
+          <div>
+            <h1>Page Not Found</h1>
+            <p>Sorry, there is nothing to see here.</p>
+            <p>
+              <Link to="app">Back to Home</Link>
+            </p>
+          </div>
+        )}
+      />
+      <Redirect to="/" />
     </Switch>
   );
 };
 
-export default withRouter(connect((auth) => auth)(Navigation));
+export default withRouter(Navigation);

@@ -23,4 +23,4 @@ const PrivateRoute = ({ component, auth, ...rest }) => {
   );
 };
 
-export default withRouter(connect(({ auth }) => auth)(PrivateRoute));
+export default withRouter(connect((auth) => auth)(PrivateRoute));
