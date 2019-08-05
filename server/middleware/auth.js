@@ -21,14 +21,15 @@ const auth = async (req, res, next) => {
     }
   } catch (error) {
     if (error.name === "TokenExpiredError") {
-      return res
-        .status(401)
-        .send({
-          tokenExpiredError: true,
-          message: "Your token has expired. Please generate a new one"
-        });
+      return res.status(401).send({
+        tokenExpiredError: true,
+        message: "Your token has expired. Please generate a new one"
+      });
     } else {
-      return res.status(401).send({ message: error.message });
+      return res.status(401).send({
+        validToken: false,
+        message: "Invalid token! Please log in again!"
+      });
     }
   }
 };

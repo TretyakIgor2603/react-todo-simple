@@ -7,16 +7,15 @@ const initialState = {
 const errorsReducer = (state = initialState, action) => {
   switch (action.type) {
     case errorActions.SET_ERROR:
-      console.log('ya TYT')
-      console.log(action.payload.errors)
       return {
+				...state,
         errors: action.payload.errors
       };
     default:
       if (action.type.indexOf("ERROR") === -1) return state;
       const { data } = action.error.response;
-      if (data.tokenExpiredError) localStorage.removeItem("token");
-      return { errors: data };
+      if (data.tokenExpiredError || !data.validToken) localStorage.removeItem("token");
+      return { ...state, errors: data };
   }
 };
 

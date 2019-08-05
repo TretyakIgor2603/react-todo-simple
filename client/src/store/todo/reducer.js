@@ -30,7 +30,10 @@ const todoReducer = (state = initialState, action) => {
     case todoActions.TOGGLE_DONE_TASK:
       return {
         ...state,
-        tasks: state.tasks.map((task) => task.id === action.meta.id ? task.done = !task.done : task)
+        tasks: state.tasks.map((task) => {
+          if (task.id === action.meta.id) task.done = !task.done;
+          return task;
+        })
       };
 
     case success(todoActions.REMOVE_TODO):
@@ -45,7 +48,7 @@ const todoReducer = (state = initialState, action) => {
         offset: action.payload.offset,
         limit: action.payload.limit
       };
-      
+
     default:
       return state;
   }

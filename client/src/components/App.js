@@ -4,11 +4,11 @@ import Notification from "./UI/Notification";
 import { BrowserRouter } from "react-router-dom";
 import Layout from "./containers/Layout";
 import { connect } from "react-redux";
-import { fetchUsers } from "../store/auth/actions";
+import { checkToken } from "../store/auth/actions";
 
 class App extends React.Component {
   componentDidMount() {
-    // this.props.fetchUsers();
+    this.props.checkToken();
   }
 
   render() {
@@ -23,11 +23,7 @@ class App extends React.Component {
   }
 }
 
-const mapActionsToProps = (dispatch) => ({
-  fetchUsers: () => dispatch(fetchUsers())
-});
-
 export default connect(
-  ({ auth }) => auth,
-  mapActionsToProps
+  null,
+  { checkToken }
 )(App);

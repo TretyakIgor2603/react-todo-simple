@@ -7,20 +7,22 @@ import SignInPage from "./pages/SigninPage";
 import ProfilePage from "./pages/ProfilePage";
 import { connect } from "react-redux";
 
-const Navigation = ({ auth }) => (
-  <Switch>
-    <Route path="/" exact component={TodoPage} />
-    <PrivateRoute exact path="/profile" component={ProfilePage} />
-    {!auth ? (
-      <>
-        <Route path="/signup" component={SignUpPage} />
-        <Route path="/login" component={SignInPage} />
-      </>
-    ) : (
-      <Route path="/logout" component={SignInPage} />
-    )}
-    <Route render={() => <h1>404</h1>} />
-  </Switch>
-);
+const Navigation = ({ auth }) => {
+  return (
+    <Switch>
+      <Route path="/" exact component={TodoPage} />
+      <PrivateRoute exact path="/profile" component={ProfilePage} />
+      {auth.isAuthenticated ? (
+        <Route path="/logout" component={SignInPage} />
+      ) : (
+        <>
+          <Route path="/signup" component={SignUpPage} />
+          <Route path="/login" component={SignInPage} />
+        </>
+      )}
+      <Route render={() => <h1>404</h1>} />
+    </Switch>
+  );
+};
 
-export default withRouter(connect(({ auth }) => auth)(Navigation));
+export default withRouter(connect((auth) => auth)(Navigation));

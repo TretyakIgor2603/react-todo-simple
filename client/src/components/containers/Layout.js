@@ -24,10 +24,16 @@ const Nav = styled.ul`
   li {
     display: inline-block;
     text-align: center;
-    flex: 1;
+		flex: 1;
+		border-right: 1px solid #ddd;
+		transition: border-color .25s ease;
     &:last-child {
-      margin-right: 0;
+			margin-right: 0;
+			border-right: none;
     }
+		&:hover {
+			border-color: #fff;
+		}
     a {
       display: block;
       padding: 5px 10px;
