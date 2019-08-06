@@ -1,4 +1,5 @@
 import { fetchTasks } from "../todo/todo-actions";
+import { fetchUserData } from "../user/user-actions";
 
 export const SIGN_UP = "SIGN_UP";
 export const signUp = (user) => ({
@@ -33,7 +34,6 @@ export const signIn = (data) => ({
 export const signInAndLogin = (data) => async (dispatch) => {
   await dispatch(signIn(data));
   await dispatch(setToken());
-  await dispatch(fetchTasks());
 };
 
 export const SIGN_OUT = "SIGN_OUT";
@@ -50,21 +50,22 @@ export const signOut = () => ({
 });
 
 export const CHECK_EXIST_EMAIL = "CHECK_EXIST_EMAIL";
-export const checkExistEmail = (email) => {
-  return {
-    type: CHECK_EXIST_EMAIL,
-    request: {
-      url: `/auth/user-exist`,
-      method: "post",
-      data: { email }
-    },
-    meta: { asPromise: true }
-  };
-};
+export const checkExistEmail = (email) => ({
+  type: CHECK_EXIST_EMAIL,
+  request: {
+    url: `/auth/user-exist`,
+    method: "post",
+    data: { email }
+  }
+});
 
 export const CHECK_TOKEN = "CHECK_TOKEN";
 export const checkToken = () => {
-  const token = getToken();
+	const token = getToken();
+	
+	// проверить на токен, если он ОК, то вызвать еще один экшн с user-actions,
+	// который примет токен и запросит пользователя и обновит пользователя
+
   if (token) {
     return {
       type: CHECK_TOKEN,
@@ -84,6 +85,12 @@ export const checkToken = () => {
   }
 };
 
+export const checkLogged = () => async (dispatch) => {
+  await dispatch(checkToken());
+  await dispatch(fetchUserData());
+};
+
+
 export const FETCH_USERS = "FETCH_USERS";
 export const fetchUsers = () => ({
   type: FETCH_USERS,
@@ -98,7 +105,7 @@ export const fetchUsers = () => ({
 
 export const signOutAndLogout = () => async (dispatch) => {
   await dispatch(signOut());
-  removeToken()
+  removeToken();
 };
 
 export const setToken = () => async (dispatch, getState) => {
