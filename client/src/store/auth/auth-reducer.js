@@ -1,4 +1,4 @@
-import * as authActions from "./actions";
+import * as authActions from "./auth-actions";
 import { success } from "redux-saga-requests";
 
 const initialState = {
@@ -35,7 +35,6 @@ const authReducer = (state = initialState, action) => {
       };
 
     case success(authActions.SIGN_IN):
-      console.log('SIGNIN SICCESS')
       return {
         ...state,
         isAuthenticated: true,

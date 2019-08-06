@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId
 
 const taskSchema = new Schema(
   {
@@ -15,6 +16,10 @@ const taskSchema = new Schema(
     date: {
       type: Date,
       default: Date.now
+    },
+    userId: {
+      type: ObjectId,
+      ref: "User"
     }
   },
   { versionKey: false }

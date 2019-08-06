@@ -4,8 +4,8 @@ import Router from "express-promise-router"
 const router = Router()
 
 router.get("/", withAuth, controllers.get);
-router.post("/", controllers.create);
-router.delete("/:id", controllers.remove);
-router.put("/", controllers.update);
+router.post("/", withAuth, controllers.create);
+router.delete("/:id", withAuth, controllers.remove);
+router.put("/", withAuth, controllers.update);
 
 export default router;

@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { notification } from "antd";
 
 const openNotification = (type, title, messages) => {
-  console.log(messages)
   const messagesList = messages.map((msg, index) => (
     <p key={index}>{msg.message ? msg.message : msg.msg}</p>
   ));
@@ -26,4 +25,4 @@ class Notification extends Component {
   }
 }
 
-export default connect(({notice}) => notice)(Notification);
+export default connect(({ notice }) => notice)(Notification);

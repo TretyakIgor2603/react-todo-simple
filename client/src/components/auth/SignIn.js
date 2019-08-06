@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Form, Icon, Input, Button, Checkbox } from "antd";
 import { Link } from "react-router-dom";
-import { signInAndLogin } from "../../store/auth/actions";
+import { signInAndLogin } from "../../store/auth/auth-actions";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 

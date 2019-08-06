@@ -10,9 +10,11 @@ export const get = async (req, res) => {
     $regex: new RegExp(Base64.decode(searchTerm)),
     $options: "i"
   };
+  query.userId = req.user._id
   const tasksTotal = await Task.countDocuments(query);
 
-  Task.find(query)
+  Task
+    .find(query)
     .skip(+req.query.offset)
     .limit(+req.query.limit)
     .sort({ date: -1 })
@@ -28,7 +30,7 @@ export const get = async (req, res) => {
 
 export const create = (req, res) => {
   const { title } = req.body;
-  new Task({ title }).save().then(task => res.status(200).send(task));
+  new Task({ title, userId: req.user._id }).save().then(task => res.status(200).send(task));
 };
 
 export const update = (req, res) => {

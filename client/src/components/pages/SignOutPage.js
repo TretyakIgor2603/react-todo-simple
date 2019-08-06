@@ -1,25 +1,20 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { signOut } from "../../store/auth/actions";
 import { withRouter } from "react-router-dom";
+import { signOutAndLogout } from "../../store/auth/auth-actions";
 
 class SignOutPage extends Component {
-  componentDidMount() {
-    this.props.signOut()
-      // .then(() => this.props.history.push("/login"))
-      // .catch(() => this.props.history.push("/login"));
-  }
+  componentDidMount = async () => {
+    await this.props.signOutAndLogout();
+    this.props.history.push("/login");
+  };
 
   render() {
-    return <div>Logout ...</div>;
+    return <div>Logout...</div>;
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  signOut: () => dispatch(signOut())
-});
-
 export default connect(
   null,
-  mapDispatchToProps
+  { signOutAndLogout }
 )(withRouter(SignOutPage));

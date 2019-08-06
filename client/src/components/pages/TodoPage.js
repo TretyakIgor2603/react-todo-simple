@@ -1,12 +1,16 @@
 import React from "react";
-import { TodoAdd, TodoList } from "../todo";
 import { connect } from "react-redux";
-import * as todoActions from "store/todo/actions";
-import { ErrorBoundary } from "../error";
-import { Alert } from "antd";
+import { Spin } from "antd";
+import { ErrorBoundary } from "../error/";
+import { TodoAdd, TodoList } from "../todo";
+import * as todoActions from "../../store/todo/todo-actions";
 import SearchPanel from "../UI/SearchPanel";
 
 class TodoPage extends React.Component {
+  state = {
+    loading: true
+  };
+
   addTask = async (title) => {
     await this.props.addTaskAndFetch(title);
   };
@@ -14,44 +18,41 @@ class TodoPage extends React.Component {
   removeTask = async (id) => {
     await this.props.removeTaskAndFetch(id);
   };
-  
+
   searchTasks = async (searchTerm) => {
-    await this.props.getTasks(0, this.props.limit, searchTerm);
+    await this.props.fetchTasks(0, this.props.limit, searchTerm);
   };
-  
+
   setPage = (page) => {
-    const { limit } = this.props;
+    const { limit } = this.props.todo;
     const newOffset = page * limit - limit;
-    this.props.setPaginationAndFetch(newOffset);
+    this.props.setPaginationAndFetch(newOffset, limit);
   };
-  
+
   getCurrentPage = (offset, limit) => offset / limit + 1;
 
-  componentDidMount() {
-    this.props.getTasks(
+  componentDidMount = async () => {
+    await this.props.initLocalState();
+    await this.props.fetchTasks(
       this.props.offset,
       this.props.limit,
       this.props.searchTerm
     );
-  }
+    this.setState({ loading: false });
+  };
 
   render() {
-    const { tasks, total, offset, limit, toggleDoneTask, error } = this.props;
+    const { loading } = this.state;
+    const { auth, toggleDoneTask } = this.props;
+    const { tasks, tasksFiltered, total, offset, limit } = this.props.todo;
 
     return (
       <ErrorBoundary>
         <TodoAdd onTodoAdd={this.addTask} />
         <SearchPanel onSearch={this.searchTasks} />
-        {error.length ? (
-          <Alert
-            style={{ marginTop: "15px" }}
-            message={error}
-            type="error"
-            showIcon
-          />
-        ) : (
+        <Spin tip="Loading..." spinning={loading}>
           <TodoList
-            tasks={tasks}
+            tasks={auth.isAuthenticated ? tasks : tasksFiltered}
             limit={limit}
             total={total}
             currentPage={this.getCurrentPage(offset, limit)}
@@ -59,13 +60,16 @@ class TodoPage extends React.Component {
             onRemoveTodo={this.removeTask}
             onChangePaging={this.setPage}
           />
-        )}
+        </Spin>
       </ErrorBoundary>
     );
   }
 }
 
 export default connect(
-  ({ todo }) => todo,
+  (state) => ({
+    todo: state.todo,
+    auth: state.auth
+  }),
   { ...todoActions }
 )(TodoPage);

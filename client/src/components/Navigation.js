@@ -12,10 +12,10 @@ const Navigation = () => {
   return (
     <Switch>
       <Route path="/" exact component={TodoPage} />
-      <Route path="/logout" component={SignOutPage} />
 
       <PublicRoute path="/signup" component={SignUpPage} />
       <PublicRoute path="/login" component={SignInPage} />
+      <PrivateRoute path="/logout" component={SignOutPage} />
       <PrivateRoute exact path="/profile" component={ProfilePage} />
 
       <Route

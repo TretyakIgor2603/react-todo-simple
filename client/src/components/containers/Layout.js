@@ -50,7 +50,6 @@ const Nav = styled.ul`
 
 const Layout = (props) => {
   const { auth } = props;
-  console.log(auth)
   return (
     <Main>
       <Row>

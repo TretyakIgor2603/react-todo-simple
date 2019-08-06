@@ -1,9 +1,9 @@
-import * as todoActions from "./actions";
+import * as todoActions from "./todo-actions";
 import { success } from "redux-saga-requests";
 
 const initialState = {
   tasks: [],
-  error: [],
+  tasksFiltered: [],
   searchTerm: "",
   offset: 0,
   limit: 5,
@@ -12,43 +12,52 @@ const initialState = {
 
 const todoReducer = (state = initialState, action) => {
   switch (action.type) {
-    case success(todoActions.ADD_TASK):
+    case todoActions.INIT_LOCAL_STATE:
+      return {
+        ...state,
+        tasks: action.payload,
+        tasksFiltered: action.payload
+      };
+
+    case success(todoActions.ADD_TASK_TO_DB):
       return {
         ...state,
         tasks: [action.data, ...state.tasks]
       };
 
-    case success(todoActions.FETCH_TASKS):
+    case todoActions.ADD_TASK_TO_LOCAL:
       return {
         ...state,
-        error: [],
+        tasks: [action.payload, ...state.tasks]
+      };
+
+    case success(todoActions.FETCH_DB_TASKS):
+      return {
+        ...state,
         searchTerm: action.meta.term,
         tasks: action.data.tasks.data,
         total: action.data.tasks.total
       };
 
-    case todoActions.GET_LOCAL_TASKS:
+    case todoActions.FETCH_LOCAL_TASKS:
       return {
         ...state,
-        error: [],
+        offset: action.payload.offset,
         searchTerm: action.meta.term,
-        tasks: action.payload.tasks,
+        tasksFiltered: action.payload.tasksFiltered,
         total: action.payload.total
       };
 
     case todoActions.TOGGLE_DONE_TASK:
       return {
         ...state,
-        tasks: state.tasks.map((task) => {
-          if (task.id === action.meta.id) task.done = !task.done;
-          return task;
-        })
+        tasks: todoActions.toggleDoneTaskFunc(state.tasks, action.meta.id)
       };
 
-    case success(todoActions.REMOVE_TODO):
+    case todoActions.REMOVE_TASK:
       return {
         ...state,
-        tasks: state.tasks.filter((task) => task.id !== action.meta.id)
+        tasks: todoActions.removeTaskFunc(state.tasks, action.meta.id)
       };
 
     case todoActions.SET_PAGINATION:

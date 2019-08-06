@@ -70,7 +70,6 @@ userSchema.methods.generateAuthToken = async function() {
     { expiresIn: 60 * 60 * 12 }
   );
   user.tokens = user.tokens.concat({ token });
-  console.log(user);
   await user.save();
   return `Bearer ${token}`;
 };

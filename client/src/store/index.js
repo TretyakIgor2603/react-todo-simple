@@ -1,7 +1,7 @@
 import axios from "axios";
 import { createStore, applyMiddleware, combineReducers } from "redux";
-import todoReducer from "./todo/reducer";
-import authReducer from "./auth/reducer";
+import todoReducer from "./todo/todo-reducer";
+import authReducer from "./auth/auth-reducer";
 import noticeReducer from "./notice/notice-reducer";
 import createSagaMiddleware from "redux-saga";
 import {

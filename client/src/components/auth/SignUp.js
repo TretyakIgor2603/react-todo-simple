@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Form, Icon, Input, Button, Tooltip, Checkbox } from "antd";
 import { connect } from "react-redux";
-import { checkExistEmail, signUpAndLogin } from "../../store/auth/actions";
+import { checkExistEmail, signUpAndLogin } from "../../store/auth/auth-actions";
 import { withRouter } from "react-router-dom";
 
 class SignUp extends Component {

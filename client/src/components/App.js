@@ -4,12 +4,12 @@ import Notification from "./UI/Notification";
 import { BrowserRouter } from "react-router-dom";
 import Layout from "./containers/Layout";
 import { connect } from "react-redux";
-import { checkToken } from "../store/auth/actions";
+import { checkToken } from "../store/auth/auth-actions";
 
 class App extends React.Component {
-  // componentDidMount() {
-  //   this.props.checkToken();
-  // }
+  componentDidMount() {
+    this.props.checkToken();
+  }
 
   render() {
     return (
@@ -24,6 +24,6 @@ class App extends React.Component {
 }
 
 export default connect(
-  null,
+  ({auth}) => auth,
   { checkToken }
 )(App);
