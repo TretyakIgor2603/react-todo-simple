@@ -19,4 +19,3 @@ export const fetchUserData = () => {
     return { type: FETCH_USER_DATA };
   }
 };
-asd
