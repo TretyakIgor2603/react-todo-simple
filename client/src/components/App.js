@@ -4,11 +4,11 @@ import Notification from "./UI/Notification";
 import { BrowserRouter } from "react-router-dom";
 import Layout from "./containers/Layout";
 import { connect } from "react-redux";
-import { checkToken } from "../store/auth/auth-actions";
+import { checkLogged } from "../store/auth/auth-actions";
 
 class App extends React.Component {
   componentDidMount() {
-    this.props.checkToken();
+    this.props.checkLogged();
   }
 
   render() {
@@ -25,5 +25,5 @@ class App extends React.Component {
 
 export default connect(
   ({auth}) => auth,
-  { checkToken }
+  { checkLogged }
 )(App);
