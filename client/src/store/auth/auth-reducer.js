@@ -8,7 +8,8 @@ const initialState = {
   token: null,
   statusText: null,
   isError: false,
-  isAuthenticated: false
+  isAuthenticated: false,
+  isLogout: false
 };
 
 const authReducer = (state = initialState, action) => {
@@ -42,12 +43,15 @@ const authReducer = (state = initialState, action) => {
         userName: action.data.userName,
         statusText: "You have been successfully logged in."
       };
+
+    case authActions.REMOVE_TOKEN:
     case success(authActions.SIGN_OUT):
       return {
         ...state,
-        isAuthenticated: false,
         token: null,
         userName: null,
+        isAuthenticated: false,
+        isLogout: true,
         statusText: "You have been successfully logged out."
       };
 

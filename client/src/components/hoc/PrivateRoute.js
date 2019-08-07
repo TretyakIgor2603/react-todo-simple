@@ -2,23 +2,38 @@ import React from "react";
 import { connect } from "react-redux";
 import { Route, Redirect, withRouter } from "react-router-dom";
 
-const PrivateRoute = ({ component, auth, ...rest }) => {
+const PrivateRoute = ({
+  isGuest = false,
+  isLogged = false,
+  component,
+  auth,
+  ...rest
+}) => {
   let ComponentToRender = component;
+
   return (
     <Route
       {...rest}
-      render={(props) =>
-        auth.isAuthenticated ? (
-          <ComponentToRender {...props} />
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: props.location, unauthorized: true }
-            }}
-          />
-        )
-      }
+      render={(props) => {
+        if (
+          (isLogged && auth.isAuthenticated) ||
+          (isGuest && !auth.isAuthenticated)
+        ) {
+          return <ComponentToRender {...props} />;
+        } else {
+          return (
+            <Redirect
+              to={{
+                pathname: isLogged ? "/login" : "/",
+                unauthorized: isLogged ? true : false,
+                state: {
+                  from: props.location
+                }
+              }}
+            />
+          );
+        }
+      }}
     />
   );
 };

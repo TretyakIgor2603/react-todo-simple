@@ -6,17 +6,22 @@ import SignUpPage from "./pages/SignupPage";
 import SignInPage from "./pages/SigninPage";
 import SignOutPage from "./pages/SignOutPage";
 import ProfilePage from "./pages/ProfilePage";
-import PublicRoute from "./hoc/PublicRoute";
 
 const Navigation = () => {
   return (
     <Switch>
       <Route path="/" exact component={TodoPage} />
 
-      <PublicRoute path="/signup" component={SignUpPage} />
-      <PublicRoute path="/login" component={SignInPage} />
-      <PrivateRoute path="/logout" component={SignOutPage} />
-      <PrivateRoute exact path="/profile" component={ProfilePage} />
+      <PrivateRoute isGuest={true} path="/signup" component={SignUpPage} />
+      <PrivateRoute isGuest={true} path="/login" component={SignInPage} />
+
+      <PrivateRoute isLogged={true} path="/logout" component={SignOutPage} />
+      <PrivateRoute
+        isLogged={true}
+        exact
+        path="/profile"
+        component={ProfilePage}
+      />
 
       <Route
         render={() => (

@@ -16,9 +16,6 @@ code {
   line-height: 1;
 }
 
-.login-form {
-  max-width: 600px;
-}
 .login-form-forgot {
   float: right;
 }
@@ -31,4 +28,21 @@ code {
 
 .login-form .ant-form-item {
   margin-bottom: 15px;
+}
+
+.g-loading {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0,0,0,.1);
+}
+
+.g-loading.ant-spin-spinning {
+  position: fixed;
+  display: flex;
 }

@@ -3,7 +3,6 @@ import withAuth from "../middleware/auth";
 import Router from "express-promise-router";
 const router = Router();
 
-router.get("/", withAuth, controllers.getUsers);
-
+router.get("/", withAuth, controllers.getUser);
 
 export default router;

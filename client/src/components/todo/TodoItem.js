@@ -1,9 +1,15 @@
 import React, { useState } from "react";
-import { List, Icon, Checkbox, Spin } from "antd";
+import { List, Icon, Checkbox, Spin, Popconfirm } from "antd";
 import styled from "styled-components";
 
 const Item = styled(List.Item)`
   user-select: none;
+  padding: 0;
+`;
+
+const CheckboxItem = styled(Checkbox)`
+  padding: 12px 0;
+  flex: 2;
 `;
 const spinIcon = <Icon type="loading" style={{ fontSize: "15px" }} spin />;
 
@@ -12,14 +18,12 @@ const TodoItem = ({ id, done, title, onToggleDone, onRemoveTodo }) => {
 
   const handleRemoveTodo = (id) => {
     setPending(true);
-    onRemoveTodo(id)
-      .then(() => setPending(false))
-      .catch(() => setPending(false));
+    onRemoveTodo(id).catch(() => setPending(false));
   };
 
   return (
     <Item>
-      <Checkbox
+      <CheckboxItem
         checked={done}
         onChange={() => onToggleDone(id)}
         style={{
@@ -27,15 +31,19 @@ const TodoItem = ({ id, done, title, onToggleDone, onRemoveTodo }) => {
         }}
       >
         {title}
-      </Checkbox>
+      </CheckboxItem>
       {isPending ? (
         <Spin style={{ marginLeft: "auto" }} indicator={spinIcon} />
       ) : (
-        <Icon
-          style={{ marginLeft: "auto" }}
-          onClick={() => handleRemoveTodo(id)}
-          type="delete"
-        />
+        <Popconfirm
+          placement="topRight"
+          title={"Are you sure to delete this task?"}
+          onConfirm={() => handleRemoveTodo(id)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Icon style={{ marginLeft: "auto" }} type="delete" />
+        </Popconfirm>
       )}
     </Item>
   );

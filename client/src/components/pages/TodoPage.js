@@ -12,7 +12,8 @@ class TodoPage extends React.Component {
   };
 
   addTask = async (title) => {
-    await this.props.addTaskAndFetch(title);
+    const tasks = [{ title }];
+    await this.props.addTasksAndFetch(tasks);
   };
 
   removeTask = async (id) => {
@@ -32,7 +33,6 @@ class TodoPage extends React.Component {
   getCurrentPage = (offset, limit) => offset / limit + 1;
 
   componentDidMount = async () => {
-    await this.props.initLocalState();
     await this.props.fetchTasks(
       this.props.offset,
       this.props.limit,
@@ -48,8 +48,9 @@ class TodoPage extends React.Component {
 
     return (
       <ErrorBoundary>
-        <TodoAdd onTodoAdd={this.addTask} />
+        <TodoAdd onTodoAdd={this.addTask} auth={auth} />
         <SearchPanel onSearch={this.searchTasks} />
+
         <Spin tip="Loading..." spinning={loading}>
           <TodoList
             tasks={auth.isAuthenticated ? tasks : tasksFiltered}

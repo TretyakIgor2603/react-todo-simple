@@ -15,14 +15,13 @@ const todoReducer = (state = initialState, action) => {
     case todoActions.INIT_LOCAL_STATE:
       return {
         ...state,
-        tasks: action.payload,
-        tasksFiltered: action.payload
+        tasks: action.payload
       };
-
-    case success(todoActions.ADD_TASK_TO_DB):
+    case success(todoActions.ADD_TASKS_TO_DB):
+      const res = action.data.length ? {...action.data} : action.data
       return {
         ...state,
-        tasks: [action.data, ...state.tasks]
+        tasks: [res, ...state.tasks]
       };
 
     case todoActions.ADD_TASK_TO_LOCAL:
@@ -58,6 +57,11 @@ const todoReducer = (state = initialState, action) => {
       return {
         ...state,
         tasks: todoActions.removeTaskFunc(state.tasks, action.meta.id)
+      };
+
+    case todoActions.CLEAR_LOCAL_TASKS:
+      return {
+        ...initialState
       };
 
     case todoActions.SET_PAGINATION:

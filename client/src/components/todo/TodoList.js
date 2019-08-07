@@ -23,7 +23,7 @@ const TodoList = ({
   onRemoveTodo,
   onChangePaging
 }) => {
-	const onChange = (page) => onChangePaging(page);
+  const onChange = (page) => onChangePaging(page);
   return (
     <TodoApp>
       <List
@@ -38,6 +38,7 @@ const TodoList = ({
         )}
       />
       <Paging
+        style={{ marginTop: "24px" }}
         simple
         defaultCurrent={1}
         current={currentPage}

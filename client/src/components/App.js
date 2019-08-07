@@ -1,22 +1,38 @@
 import React from "react";
+import { connect } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
+import { checkLogged } from "../store/auth/auth-actions";
+import { Skeleton } from "antd";
+import Layout from "./containers/Layout";
+import Navbar from "./UI/Navbar";
 import Navigation from "./Navigation";
 import Notification from "./UI/Notification";
-import { BrowserRouter } from "react-router-dom";
-import Layout from "./containers/Layout";
-import { connect } from "react-redux";
-import { checkLogged } from "../store/auth/auth-actions";
 
 class App extends React.Component {
-  componentDidMount() {
-    this.props.checkLogged();
-  }
+  state = {
+    loading: true
+  };
+  componentDidMount = async () => {
+    await this.props.checkLogged();
+    this.setState({ loading: false });
+  };
 
   render() {
+    const { loading } = this.state;
+    const { auth } = this.props;
+
     return (
       <BrowserRouter>
         <Layout>
-          <Navigation />
-          <Notification />
+          {loading ? (
+            <Skeleton active paragraph={{ rows: 10 }} />
+          ) : (
+            <>
+              <Navbar auth={auth} />
+              <Navigation />
+              <Notification />
+            </>
+          )}
         </Layout>
       </BrowserRouter>
     );
@@ -24,6 +40,6 @@ class App extends React.Component {
 }
 
 export default connect(
-  ({auth}) => auth,
+  (auth) => auth,
   { checkLogged }
 )(App);

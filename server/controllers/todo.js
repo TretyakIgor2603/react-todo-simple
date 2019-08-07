@@ -10,11 +10,10 @@ export const get = async (req, res) => {
     $regex: new RegExp(Base64.decode(searchTerm)),
     $options: "i"
   };
-  query.userId = req.user._id
+  query.userId = req.user._id;
   const tasksTotal = await Task.countDocuments(query);
 
-  Task
-    .find(query)
+  Task.find(query)
     .skip(+req.query.offset)
     .limit(+req.query.limit)
     .sort({ date: -1 })
@@ -29,8 +28,23 @@ export const get = async (req, res) => {
 };
 
 export const create = (req, res) => {
-  const { title } = req.body;
-  new Task({ title, userId: req.user._id }).save().then(task => res.status(200).send(task));
+  if (req.body.length) {
+    req.body.map(task => {
+      delete task.id;
+      task.userId = req.user._id;
+      return task;
+    });
+    Task.insertMany(req.body, (error, tasks) => {
+      console.log(error);
+      tasks && res.status(200).send(tasks);
+    });
+  } else {
+    const { title } = req.body;
+    new Task({ title, userId: req.user._id })
+      .save()
+      .then(task => res.status(200).send(task))
+      .catch(err => res.status(500).send({ message: err.message }));
+  }
 };
 
 export const update = (req, res) => {

@@ -1,7 +1,8 @@
 import axios from "axios";
-import { createStore, applyMiddleware, combineReducers } from "redux";
+import { createStore, applyMiddleware, combineReducers, compose } from "redux";
 import todoReducer from "./todo/todo-reducer";
 import authReducer from "./auth/auth-reducer";
+import userReducer from "./user/user-reducer";
 import noticeReducer from "./notice/notice-reducer";
 import createSagaMiddleware from "redux-saga";
 import {
@@ -19,14 +20,19 @@ function* rootSaga(axiosInstance) {
 
 const sagaMiddleware = createSagaMiddleware();
 const rootReducer = combineReducers({
-  todo: todoReducer,
   auth: authReducer,
+  user: userReducer,
+  todo: todoReducer,
   notice: noticeReducer
 });
 
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 const store = createStore(
   rootReducer,
-  applyMiddleware(sagaMiddleware, thunk, requestsPromiseMiddleware())
+  composeEnhancers(
+    applyMiddleware(sagaMiddleware, thunk, requestsPromiseMiddleware())
+  )
 );
 
 const axiosInstance = axios.create({
