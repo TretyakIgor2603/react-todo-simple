@@ -18,7 +18,9 @@ const TodoItem = ({ id, done, title, onToggleDone, onRemoveTodo }) => {
 
   const handleRemoveTodo = (id) => {
     setPending(true);
-    onRemoveTodo(id).catch(() => setPending(false));
+		onRemoveTodo(id)
+			.then(() => setPending(false))
+			.catch(() => setPending(false));
   };
 
   return (

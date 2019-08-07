@@ -16,7 +16,8 @@ export const signUpAndLogin = (user, autoLogin = false) => async (dispatch) => {
   await dispatch(signUp(user));
   if (autoLogin) {
     await dispatch(setToken());
-    await dispatch(fetchTasks());
+		await dispatch(saveLocalTasksToDB());
+		await dispatch(fetchTasks());
   }
 };
 
@@ -59,7 +60,8 @@ export const checkExistEmail = (email) => ({
     url: `/auth/user-exist`,
     method: "post",
     data: { email }
-  }
+  },
+  meta: { asPromise: true }
 });
 
 export const CHECK_TOKEN = "CHECK_TOKEN";

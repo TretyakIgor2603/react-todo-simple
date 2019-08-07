@@ -76,8 +76,8 @@ export const addTasksToDB = (tasks) => (dispatch, getState) => {
 
 export const saveLocalTasksToDB = () => async (dispatch, getState) => {
   const localTasks = getState().todo.tasks;
-  await dispatch(addTasksToDB(localTasks));
   await dispatch(clearLocalTasks(localTasks));
+  await dispatch(addTasksToDB(localTasks));
 };
 
 export const ADD_TASK_TO_LOCAL = "ADD_TASK_TO_LOCAL";
