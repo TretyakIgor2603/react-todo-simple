@@ -4,7 +4,7 @@ import { Spin } from "antd";
 import { ErrorBoundary } from "../error/";
 import { TodoAdd, TodoList } from "../todo";
 import * as todoActions from "../../store/todo/todo-actions";
-import SearchPanel from "../UI/SearchPanel";
+import SearchPanel from "../ui/SearchPanel";
 
 class TodoPage extends React.Component {
   state = {

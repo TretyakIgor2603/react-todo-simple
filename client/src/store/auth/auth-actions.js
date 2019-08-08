@@ -1,5 +1,6 @@
 import { fetchTasks, saveLocalTasksToDB } from "../todo/todo-actions";
 import { fetchUserData } from "../user/user-actions";
+import { setToken } from "../../utils/token";
 
 export const SIGN_UP = "SIGN_UP";
 export const signUp = (user) => ({
@@ -16,8 +17,8 @@ export const signUpAndLogin = (user, autoLogin = false) => async (dispatch) => {
   await dispatch(signUp(user));
   if (autoLogin) {
     await dispatch(setToken());
-		await dispatch(saveLocalTasksToDB());
-		await dispatch(fetchTasks());
+    await dispatch(saveLocalTasksToDB());
+    await dispatch(fetchTasks());
   }
 };
 
@@ -65,21 +66,6 @@ export const checkExistEmail = (email) => ({
   meta: { asPromise: true }
 });
 
-export const CHECK_TOKEN = "CHECK_TOKEN";
-export const checkToken = (token) => {
-  return {
-    type: CHECK_TOKEN,
-    request: {
-      url: `/auth/check-token`,
-      method: "get",
-      headers: {
-        Authorization: token
-      }
-    },
-    meta: { token, asPromise: true }
-  };
-};
-
 export const FETCH_USERS = "FETCH_USERS";
 export const fetchUsers = () => async (dispatch, getState) => {
   dispatch({
@@ -99,22 +85,6 @@ export const signOutAndLogout = () => async (dispatch, getState) => {
     await dispatch(signOut());
     removeToken();
   }
-};
-
-export const checkLogged = () => async (dispatch) => {
-  const token = getToken();
-  if (token) {
-    await dispatch(checkToken(token));
-    await dispatch(fetchUserData());
-  }
-};
-
-export const setToken = () => async (dispatch, getState) => {
-  localStorage.setItem("token", JSON.stringify(getState().auth.token));
-};
-
-export const getToken = () => {
-  return JSON.parse(localStorage.getItem("token")) || null;
 };
 
 export const REMOVE_TOKEN = "REMOVE_TOKEN";
