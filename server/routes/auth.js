@@ -7,8 +7,6 @@ router.post("/user-exist", controllers.userExist);
 router.post("/login", controllers.validate("login"), controllers.login);
 router.post("/logout", withAuth, controllers.logout);
 router.post("/register", controllers.register);
-router.get("/check-token", withAuth, function(req, res) {
-  res.sendStatus(200);
-});
+router.get("/check-token", withAuth, (req, res) => res.sendStatus(200));
 
 export default router;

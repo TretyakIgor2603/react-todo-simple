@@ -35,6 +35,7 @@ export const signIn = (data) => ({
 export const signInAndLogin = (data) => async (dispatch) => {
   await dispatch(signIn(data));
   await dispatch(setToken());
+  await dispatch(fetchUserData());
   await dispatch(saveLocalTasksToDB());
 };
 

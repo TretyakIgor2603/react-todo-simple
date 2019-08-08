@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
-const Profile = () => {
-  return (
-    <div>
-      Profile!
-    </div>
-  )
-}
+const Profile = ({ user }) => {
+  return <div>Hello, {user.nickname}!</div>;
+};
 
-export default Profile
+export default Profile;

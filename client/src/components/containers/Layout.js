@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { Row, Col } from "antd";
-import { connect } from "react-redux";
 
 const Main = styled.div`
   display: flex;
@@ -10,7 +9,6 @@ const Main = styled.div`
   padding: 30px;
   background-color: rgba(221, 221, 221, 0.03);
 `;
-
 
 const Layout = (props) => {
   return (
@@ -24,4 +22,4 @@ const Layout = (props) => {
   );
 };
 
-export default connect((auth) => auth)(Layout);
+export default Layout;

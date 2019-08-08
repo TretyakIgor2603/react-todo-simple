@@ -19,9 +19,8 @@ app.use("/api/tasks", todoRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 
-app.use(function(err, req, res, next) {
-  console.error(err.stack);
-  res.status(500).send("Something broke!");
+app.use((err, req, res, next) => {
+  res.status(500).send({ message: "Something broke!" });
 });
 
 export default app;

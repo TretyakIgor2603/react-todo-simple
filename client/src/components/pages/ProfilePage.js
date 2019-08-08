@@ -1,8 +1,9 @@
 import React from "react";
 import Profile from "../profile/Profile";
+import { connect } from "react-redux";
 
-const ProfilePage = () => {
-  return <Profile />;
+const ProfilePage = ({ user }) => {
+  return <Profile user={user} />;
 };
 
-export default ProfilePage;
+export default connect(({ user }) => user)(ProfilePage);

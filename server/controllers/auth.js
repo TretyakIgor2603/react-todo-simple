@@ -21,15 +21,9 @@ export const validate = method => {
 
 export const userExist = async (req, res) => {
   const candidate = await User.findOne({ email: req.body.email });
-  if (candidate) {
-    res.status(409).send({
-      message: "Email is already exist!"
-    });
-  } else {
-    res.status(200).send({
-      message: "E-mail is free!"
-    });
-  }
+  candidate
+    ? res.status(409).send({ message: "E-mail is already exist!" })
+    : res.status(200).send({ message: "E-mail is free!" });
 };
 
 export const register = async function(req, res) {
@@ -50,21 +44,18 @@ export const register = async function(req, res) {
 };
 
 export const login = async function(req, res) {
+  const { errors } = validationResult(req);
+  const { email, password } = req.body;
+
   try {
-    const { errors } = validationResult(req);
     if (errors && errors.length) {
       throw errors.errors;
+    } else {
+      const user = await User.findByCredentials(email, password);
+      res.status(200).send({ token: await user.generateAuthToken() });
     }
-    const { email, password } = req.body;
-    const user = await User.findOne({ email }).exec();
-    if (user === null) throw "User not found";
-
-    let comparePasswords = await user.comparePassword(password);
-    if (!comparePasswords) throw "Wrong password!";
-
-    res.status(200).send({ token: await user.generateAuthToken() });
   } catch (errors) {
-    res.status(401).send({ message: "Invalid credentials", errors });
+    res.status(401).send({ ...errors });
   }
 };
 

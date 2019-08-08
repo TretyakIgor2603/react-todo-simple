@@ -140,7 +140,7 @@ class SignUp extends Component {
             {getFieldDecorator("autoLogin", {
               valuePropName: "checked",
               initialValue: true
-            })(<Checkbox>Log in immediately</Checkbox>)}
+            })(<Checkbox>Auto log in</Checkbox>)}
           </div>
           <Button type="primary" htmlType="submit">
             Register

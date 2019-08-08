@@ -23,7 +23,6 @@ const TodoList = ({
   onRemoveTodo,
   onChangePaging
 }) => {
-  const onChange = (page) => onChangePaging(page);
   return (
     <TodoApp>
       <List
@@ -42,7 +41,7 @@ const TodoList = ({
         simple
         defaultCurrent={1}
         current={currentPage}
-        onChange={onChange}
+        onChange={(page) => onChangePaging(page)}
         total={total !== 0 ? total : limit}
         pageSize={limit}
       />

@@ -76,8 +76,10 @@ export const addTasksToDB = (tasks) => (dispatch, getState) => {
 
 export const saveLocalTasksToDB = () => async (dispatch, getState) => {
   const localTasks = getState().todo.tasks;
-  await dispatch(clearLocalTasks(localTasks));
-  await dispatch(addTasksToDB(localTasks));
+  if (localTasks.length) {
+    await dispatch(clearLocalTasks(localTasks));
+    await dispatch(addTasksToDB(localTasks));
+  }
 };
 
 export const ADD_TASK_TO_LOCAL = "ADD_TASK_TO_LOCAL";
@@ -229,7 +231,7 @@ export const clearLocalTasks = () => {
   return {
     type: CLEAR_LOCAL_TASKS,
     meta: { asPromise: true }
-  }
+  };
 };
 
 export const INIT_LOCAL_STATE = "INIT_LOCAL_STATE";

@@ -62,7 +62,6 @@ export const update = (req, res) => {
   }
 };
 
-// how remove multiple items ?
 export const remove = (req, res) => {
   Task.findByIdAndRemove(req.body.id).then(() => res.sendStatus(200));
 };
