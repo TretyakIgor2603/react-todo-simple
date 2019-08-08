@@ -20,7 +20,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 
 app.use((err, req, res, next) => {
-  res.status(500).send({ message: "Something broke!" });
+  res.status(500).send({ message: err.message, err });
 });
 
 export default app;

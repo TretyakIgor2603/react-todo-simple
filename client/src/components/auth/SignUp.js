@@ -88,15 +88,15 @@ class SignUp extends Component {
         <Form.Item
           label={
             <span>
-              Nickname&nbsp;
-              <Tooltip title="For example 'RobotVasya'">
+              Name&nbsp;
+              <Tooltip title="For example 'Jim Carrey'">
                 <Icon type="question-circle-o" />
               </Tooltip>
             </span>
           }
           hasFeedback
         >
-          {getFieldDecorator("nickname", {
+          {getFieldDecorator("username", {
             rules: [{ required: true, min: 3 }]
           })(<Input />)}
         </Form.Item>

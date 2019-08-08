@@ -28,7 +28,7 @@ export const userExist = async (req, res) => {
 
 export const register = async function(req, res) {
   const response = {};
-  const { nickname, email, password, autoLogin } = req.body;
+  const { username, email, password, autoLogin } = req.body;
   const candidate = await User.findOne({ email });
 
   if (candidate) {
@@ -36,7 +36,7 @@ export const register = async function(req, res) {
       message: "Email is already exist!"
     });
   } else {
-    const user = await new User({ nickname, email, password }).save();
+    const user = await new User({ username, email, password }).save();
     response.user = user;
     autoLogin && (response.token = await user.generateAuthToken());
     res.status(201).send(response);

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { List, Icon, Checkbox, Spin, Popconfirm } from "antd";
+import { List, Icon, Checkbox, Spin } from "antd";
 import styled from "styled-components";
 
 const Item = styled(List.Item)`
@@ -18,9 +18,9 @@ const TodoItem = ({ id, done, title, onToggleDone, onRemoveTodo }) => {
 
   const handleRemoveTodo = (id) => {
     setPending(true);
-		onRemoveTodo(id)
-			.then(() => setPending(false))
-			.catch(() => setPending(false));
+    onRemoveTodo(id)
+      .then(() => setPending(false))
+      .catch(() => setPending(false));
   };
 
   return (
@@ -37,15 +37,11 @@ const TodoItem = ({ id, done, title, onToggleDone, onRemoveTodo }) => {
       {isPending ? (
         <Spin style={{ marginLeft: "auto" }} indicator={spinIcon} />
       ) : (
-        <Popconfirm
-          placement="topRight"
-          title={"Are you sure to delete this task?"}
-          onConfirm={() => handleRemoveTodo(id)}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Icon style={{ marginLeft: "auto" }} type="delete" />
-        </Popconfirm>
+        <Icon
+          onClick={() => handleRemoveTodo(id)}
+          style={{ marginLeft: "auto" }}
+          type="delete"
+        />
       )}
     </Item>
   );

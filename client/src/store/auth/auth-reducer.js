@@ -30,7 +30,7 @@ const authReducer = (state = initialState, action) => {
     case success(authActions.SIGN_UP):
       return {
         ...state,
-        userName: action.data.user.nickname,
+        userName: action.data.user.username,
         token: action.data.token ? action.data.token : null,
         isAuthenticated: action.data.token ? true : false
       };

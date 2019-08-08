@@ -10,40 +10,39 @@ export const get = async (req, res) => {
     $regex: new RegExp(Base64.decode(searchTerm)),
     $options: "i"
   };
-  query.userId = req.user._id;
+  query.user_id = req.user.id;
   const tasksTotal = await Task.countDocuments(query);
 
   Task.find(query)
     .skip(+req.query.offset)
     .limit(+req.query.limit)
     .sort({ date: -1 })
-    .then(async tasks =>
+    .then(async tasks => {
       res.status(200).send({
         tasks: {
           data: tasks,
           total: tasksTotal
         }
-      })
-    );
+      });
+    });
 };
 
-export const create = (req, res) => {
+export const create = async (req, res) => {
   if (req.body.length) {
-    req.body.map(task => {
-      delete task.id;
-      task.userId = req.user._id;
+    const reqTasks = req.body;
+    reqTasks.map(task => {
+      const { id, ...otherProps } = task;
+      console.log("otherProps", otherProps);
+      otherProps.user_id = req.user.id;
       return task;
     });
-    Task.insertMany(req.body, (error, tasks) => {
-      console.log(error);
-      tasks && res.status(200).send(tasks);
+    Task.insertMany(reqTasks, function(error, tasks) {
+      res.status(200).send(tasks);
     });
   } else {
     const { title } = req.body;
-    new Task({ title, userId: req.user._id })
-      .save()
-      .then(task => res.status(200).send(task))
-      .catch(err => res.status(500).send({ message: err.message }));
+    const task = new Task({ title, user_id: req.user.id }).save();
+    res.status(200).send(task);
   }
 };
 
