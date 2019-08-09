@@ -1,30 +1,21 @@
 import { Base64 } from "js-base64";
 
 export const FETCH_DB_TASKS = "FETCH_DB_TASKS";
-export const fetchDBTasks = (offset = 0, limit = 5, term = "") => async (
-  dispatch,
-  getState
-) => {
-  dispatch({
-    type: FETCH_DB_TASKS,
-    request: {
-      url: `/tasks?offset=${offset}&limit=${limit}&search=${Base64.encode(
-        term
-      )}`,
-      method: "get",
-      headers: {
-        Authorization: getState().auth.token
-      }
-    },
-    meta: {
-      term,
-      asPromise: true
-    }
-  });
-};
+export const fetchDBTasks = (offset = 0, limit = 5, term = "") => ({
+  type: FETCH_DB_TASKS,
+  request: {
+    url: `/tasks?offset=${offset}&limit=${limit}&search=${Base64.encode(term)}`,
+    method: "get"
+  },
+  meta: {
+    term,
+    asPromise: true
+  }
+});
 
 export const FETCH_LOCAL_TASKS = "FETCH_LOCAL_TASKS";
 export const fetchLocalTasks = (offset = 0, limit = 5, term = "") => {
+  console.log(offset);
   return async (dispatch, getState) => {
     const tasks = getState().todo.tasks;
     const tasksFiltered = tasks.filter(({ title }) =>
@@ -50,29 +41,25 @@ export const fetchTasks = (offset, limit, term) => async (
   dispatch,
   getState
 ) => {
-  if (getState().auth.isAuthenticated) {
+  const { account, todo } = getState();
+  if (account.isAuthorized) {
     await dispatch(fetchDBTasks(offset, limit, term));
   } else {
-    await dispatch(initLocalState());
+    !todo.tasks.length && (await dispatch(initLocalState()));
     await dispatch(fetchLocalTasks(offset, limit, term));
   }
 };
 
 export const ADD_TASKS_TO_DB = "ADD_TASKS_TO_DB";
-export const addTasksToDB = (tasks) => (dispatch, getState) => {
-  return dispatch({
-    type: ADD_TASKS_TO_DB,
-    request: {
-      url: "/tasks",
-      data: tasks,
-      method: "post",
-      headers: {
-        Authorization: getState().auth.token
-      }
-    },
-    meta: { asPromise: true }
-  });
-};
+export const addTasksToDB = (tasks) => ({
+  type: ADD_TASKS_TO_DB,
+  request: {
+    url: "/tasks",
+    data: tasks,
+    method: "post"
+  },
+  meta: { asPromise: true }
+});
 
 export const saveLocalTasksToDB = () => async (dispatch, getState) => {
   const localTasks = getState().todo.tasks;
@@ -101,8 +88,8 @@ export const addTaskToLocal = ({ title }) => (dispatch, getState) => {
 export const ADD_TASK_AND_FETCH = "ADD_TASK_AND_FETCH";
 export const addTasksAndFetch = (tasks) => async (dispatch, getState) => {
   const { searchTerm, offset, limit } = getState().todo;
-  const { token } = getState().auth;
-  if (token) {
+  const { isAuthenticated } = getState().account;
+  if (isAuthenticated) {
     await dispatch(addTasksToDB(tasks));
     await dispatch(fetchTasks(offset, limit, searchTerm));
   } else {
@@ -112,20 +99,15 @@ export const addTasksAndFetch = (tasks) => async (dispatch, getState) => {
 };
 
 export const TOGGLE_DONE_TASK = "TOGGLE_DONE_TASK";
-export const toggleDoneTaskFromDB = (id) => (dispatch, getState) => {
-  return dispatch({
-    type: TOGGLE_DONE_TASK,
-    request: {
-      url: `/tasks?complete=${id}`,
-      data: { id },
-      method: "put",
-      headers: {
-        Authorization: getState().auth.token
-      }
-    },
-    meta: { id }
-  });
-};
+export const toggleDoneTaskFromDB = (id) => ({
+  type: TOGGLE_DONE_TASK,
+  request: {
+    url: `/tasks?complete=${id}`,
+    data: { id },
+    method: "put"
+  },
+  meta: { id }
+});
 
 export const toggleDoneTaskFromLocal = (id) => {
   setLocalTasks(toggleDoneTaskFunc(getLocalTasks(), id));
@@ -136,46 +118,42 @@ export const toggleDoneTaskFromLocal = (id) => {
 };
 
 export const toggleDoneTask = (id) => async (dispatch, getState) => {
-  getState().auth.token
+  getState().account.isAuthorized
     ? await dispatch(toggleDoneTaskFromDB(id))
     : await dispatch(toggleDoneTaskFromLocal(id));
 };
 
 export const REMOVE_TASK = "REMOVE_TASK";
-export const removeTaskFromDB = (id) => (dispatch, getState) => {
-  return dispatch({
-    type: REMOVE_TASK,
-    request: {
-      url: `/tasks/${id}`,
-      data: { id },
-      method: "delete",
-      headers: {
-        Authorization: getState().auth.token
-      }
-    },
-    meta: {
-      id,
-      asPromise: true
-    }
-  });
-};
+export const removeTaskFromDB = (id) => ({
+  type: REMOVE_TASK,
+  request: {
+    url: `/tasks/${id}`,
+    data: { id },
+    method: "delete"
+  },
+  meta: {
+    id,
+    asPromise: true
+  }
+});
 
 export const removeTaskFromLocal = (id) => {
   return async (dispatch, getState) => {
-    setLocalTasks(removeTaskFunc(getState().todo.tasks, id));
-    dispatch({
+    setLocalTasks(getState().todo.tasks.filter((task) => task.id !== id));
+    return dispatch({
       type: REMOVE_TASK,
-      meta: { id }
+      meta: { id, asPromise: true }
     });
   };
 };
 
 export const REMOVE_TODO_AND_FETCH = "REMOVE_TODO_AND_FETCH";
 export const removeTaskAndFetch = (id) => async (dispatch, getState) => {
-  const { searchTerm, offset, limit } = getState().todo;
-  getState().auth.token
+  getState().account.isAuthorized
     ? await dispatch(removeTaskFromDB(id))
     : await dispatch(removeTaskFromLocal(id));
+
+  const { searchTerm, offset, limit } = getState().todo;
   await dispatch(fetchTasks(offset, limit, searchTerm));
 };
 
@@ -213,10 +191,6 @@ export const toggleDoneTaskFunc = (tasks, id) => {
   });
 };
 
-export const removeTaskFunc = (tasks, id) => {
-  return tasks.filter((task) => task.id !== id);
-};
-
 export const setLocalTasks = (tasks = []) => {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
@@ -224,6 +198,13 @@ export const setLocalTasks = (tasks = []) => {
 export const getLocalTasks = () => {
   return JSON.parse(localStorage.getItem("tasks")) || [];
 };
+
+export const INIT_LOCAL_STATE = "INIT_LOCAL_STATE";
+export const initLocalState = () => ({
+  type: INIT_LOCAL_STATE,
+  payload: getLocalTasks(),
+  meta: { asPromise: true }
+});
 
 export const CLEAR_LOCAL_TASKS = "CLEAR_LOCAL_TASKS";
 export const clearLocalTasks = () => {
@@ -233,10 +214,3 @@ export const clearLocalTasks = () => {
     meta: { asPromise: true }
   };
 };
-
-export const INIT_LOCAL_STATE = "INIT_LOCAL_STATE";
-export const initLocalState = () => ({
-  type: INIT_LOCAL_STATE,
-  payload: getLocalTasks(),
-  meta: { asPromise: true }
-});

@@ -39,7 +39,7 @@ const Nav = styled.ul`
   }
 `;
 
-const Navbar = ({ auth }) => {
+const Navbar = ({ account }) => {
   return (
     <Nav>
       <li>
@@ -47,7 +47,7 @@ const Navbar = ({ auth }) => {
           Tasks
         </NavLink>
       </li>
-      {auth.isAuthenticated ? (
+      {account.isAuthorized ? (
         <>
           <li>
             <NavLink to="/profile" exact={false}>

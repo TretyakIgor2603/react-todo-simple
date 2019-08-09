@@ -1,40 +1,13 @@
 import React, { useState } from "react";
-import { Button, Input, Row, Col, Spin, Modal, Checkbox } from "antd";
+import { Button, Input, Row, Col, Spin } from "antd";
 
 const TodoAdd = (props) => {
   const [title, setTitle] = useState("");
-  const [showModal, setShowModal] = useState(true);
   const [isPending, setPending] = useState(false);
-  const { onTodoAdd, auth } = props;
+  const { onTodoAdd } = props;
 
-  const contentModal = (
-    <>
-      <p>
-        {
-          "You work in guest mode. After flushing the cache, all data will be deleted. To save information, please register or log in."
-        }
-      </p>
-      <Checkbox onChange={(e) => setShowModal(!e.target.checked)}>
-        Don't show again
-      </Checkbox>
-    </>
-  );
-
-  const openWarningModal = (e) => {
-    Modal.confirm({
-      title: "Attention!",
-      content: contentModal,
-      icon: "exclamation-circle",
-      onOk() {
-        onSubmit(e);
-      },
-      onCancel() {},
-      okText: "Okay",
-      cancelText: "Cancel"
-    });
-  };
-
-  const onSubmit = async () => {
+  const onSubmit = async (e) => {
+    e.preventDefault();
     if (!title.length) return;
     setPending(true);
     await onTodoAdd(title)
@@ -45,12 +18,7 @@ const TodoAdd = (props) => {
   const onInputChange = (e) => setTitle(e.target.value);
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        auth.isAuthenticated || !showModal ? onSubmit() : openWarningModal(e);
-      }}
-    >
+    <form onSubmit={(e) => onSubmit(e)}>
       <Row>
         <Col span={20}>
           <Input

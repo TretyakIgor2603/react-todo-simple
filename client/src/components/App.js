@@ -5,15 +5,21 @@ import Layout from "./containers/Layout";
 import Navbar from "./ui/Navbar";
 import Navigation from "./Navigation";
 import Notification from "./ui/Notification";
+import { checkAuthorized } from "../store/account/account-actions";
+import { getToken } from "../utils/token";
 
 class App extends React.Component {
+  componentDidMount() {
+    getToken() && this.props.checkAuthorized();
+  }
+
   render() {
-    const { auth } = this.props;
+    const { account } = this.props;
 
     return (
       <BrowserRouter>
         <Layout>
-          <Navbar auth={auth} />
+          <Navbar account={account} />
           <Navigation />
           <Notification />
         </Layout>
@@ -22,4 +28,7 @@ class App extends React.Component {
   }
 }
 
-export default connect((auth) => auth)(App);
+export default connect(
+  (account) => account,
+  { checkAuthorized }
+)(App);

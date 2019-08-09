@@ -1,9 +1,8 @@
 import axios from "axios";
 import { createStore, applyMiddleware, combineReducers, compose } from "redux";
-import todoReducer from "./todo/todo-reducer";
-import authReducer from "./auth/auth-reducer";
-import userReducer from "./user/user-reducer";
-import noticeReducer from "./notice/notice-reducer";
+import todo from "./todo/todo-reducer";
+import account from "./account/account-reducer";
+import notice from "./notice/notice-reducer";
 import createSagaMiddleware from "redux-saga";
 import {
   createRequestInstance,
@@ -13,19 +12,29 @@ import {
 import { createDriver } from "redux-saga-requests-axios";
 import thunk from "redux-thunk";
 
+// ---
+axios.defaults.baseURL = "http://localhost:5000/api";
+axios.defaults.headers.common["Authorization"] = "";
+
 function* rootSaga(axiosInstance) {
   yield createRequestInstance({ driver: createDriver(axiosInstance) });
   yield watchRequests();
 }
 
 const sagaMiddleware = createSagaMiddleware();
-const rootReducer = combineReducers({
-  auth: authReducer,
-  user: userReducer,
-  todo: todoReducer,
-  notice: noticeReducer
-});
+const axiosInstance = axios.create();
 
+axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  console.log("interceptors", token);
+  token
+    ? (config.headers["Authorization"] = `Bearer ${token}`)
+    : delete axios.defaults.headers.common["Authorization"];
+  return config;
+});
+// ---
+
+const rootReducer = combineReducers({ account, todo, notice });
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
@@ -34,10 +43,6 @@ const store = createStore(
     applyMiddleware(sagaMiddleware, thunk, requestsPromiseMiddleware())
   )
 );
-
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/api"
-});
 
 sagaMiddleware.run(rootSaga, axiosInstance);
 

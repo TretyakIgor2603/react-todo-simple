@@ -54,6 +54,7 @@ export const update = (req, res) => {
           message: "Todo was not found!"
         });
       } else {
+        console.log(task)
         task.done = !task.done;
         task.save().then(() => res.sendStatus(200));
       }

@@ -1,5 +1,5 @@
 import * as noticeActions from "./notice-actions";
-import { signOutAndLogout } from "../auth/auth-actions";
+import { signOut } from "../account/account-actions";
 
 const initialState = {
   type: "error",
@@ -20,7 +20,7 @@ const noticeReducer = (state = initialState, action) => {
     default:
       if (action.type.indexOf("ERROR") === -1) return state;
       const { data } = action.error.response;
-      if (data.tokenExpiredError || !data.validToken) signOutAndLogout();
+      if (data.tokenExpiredError || !data.validToken) signOut();
       return { ...state, messages: [data] };
   }
 };

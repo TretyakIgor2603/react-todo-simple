@@ -6,7 +6,7 @@ const PrivateRoute = ({
   isGuest = false,
   isLogged = false,
   component,
-  auth,
+  account,
   ...rest
 }) => {
   let ComponentToRender = component;
@@ -16,8 +16,8 @@ const PrivateRoute = ({
       {...rest}
       render={(props) => {
         if (
-          (isLogged && auth.isAuthenticated) ||
-          (isGuest && !auth.isAuthenticated)
+          (isLogged && account.isAuthorized) ||
+          (isGuest && !account.isAuthorized)
         ) {
           return <ComponentToRender {...props} />;
         } else {
@@ -38,4 +38,4 @@ const PrivateRoute = ({
   );
 };
 
-export default withRouter(connect((auth) => auth)(PrivateRoute));
+export default withRouter(connect((account) => account)(PrivateRoute));

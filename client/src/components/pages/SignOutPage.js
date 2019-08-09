@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { signOutAndLogout } from "../../store/auth/auth-actions";
+import { signOut } from "../../store/account/account-actions";
 
 class SignOutPage extends Component {
   componentDidMount = async () => {
-    await this.props.signOutAndLogout();
+    await this.props.signOut();
     this.props.history.push("/login");
   };
 
@@ -16,5 +16,5 @@ class SignOutPage extends Component {
 
 export default connect(
   null,
-  { signOutAndLogout }
+  { signOut }
 )(withRouter(SignOutPage));

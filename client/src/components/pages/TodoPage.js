@@ -30,7 +30,9 @@ class TodoPage extends React.Component {
     this.props.setPaginationAndFetch(newOffset, limit);
   };
 
-  getCurrentPage = (offset, limit) => offset / limit + 1;
+  getCurrentPage = (offset, limit) => {
+    return offset / limit + 1;
+  }
 
   componentDidMount = async () => {
     await this.props.fetchTasks(
@@ -43,17 +45,17 @@ class TodoPage extends React.Component {
 
   render() {
     const { loading } = this.state;
-    const { auth, toggleDoneTask } = this.props;
+    const { account, toggleDoneTask } = this.props;
     const { tasks, tasksFiltered, total, offset, limit } = this.props.todo;
 
     return (
       <ErrorBoundary>
-        <TodoAdd onTodoAdd={this.addTask} auth={auth} />
+        <TodoAdd onTodoAdd={this.addTask} account={account} />
         <SearchPanel onSearch={this.searchTasks} />
 
         <Spin tip="Loading..." spinning={loading}>
           <TodoList
-            tasks={auth.isAuthenticated ? tasks : tasksFiltered}
+            tasks={account.isAuthorized ? tasks : tasksFiltered}
             limit={limit}
             total={total}
             currentPage={this.getCurrentPage(offset, limit)}
@@ -70,7 +72,7 @@ class TodoPage extends React.Component {
 export default connect(
   (state) => ({
     todo: state.todo,
-    auth: state.auth
+    account: state.account
   }),
   { ...todoActions }
 )(TodoPage);

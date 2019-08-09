@@ -3,7 +3,7 @@ import TodoPage from "./pages/TodoPage";
 import { Route, Switch, withRouter, Link, Redirect } from "react-router-dom";
 import PrivateRoute from "./hoc/PrivateRoute";
 import SignUpPage from "./pages/SignupPage";
-import SignInPage from "./pages/SigninPage";
+import SignInPage from "./pages/SignInPage";
 import SignOutPage from "./pages/SignOutPage";
 import ProfilePage from "./pages/ProfilePage";
 
