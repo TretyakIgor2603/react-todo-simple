@@ -159,6 +159,6 @@ const mapActionsToProps = (dispatch) => ({
 });
 
 export default connect(
-  ({ auth }) => auth,
+  ({ account }) => account,
   mapActionsToProps
 )(withRouter(WrappedSignUp));

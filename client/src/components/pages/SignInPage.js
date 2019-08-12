@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import { setMessage } from "../../store/notice/notice-actions";
 import WrappedSignIn from "../auth/SignIn";
 
-const SignInPage = ({ location, auth, setMessage }) => {
-  if (location.unauthorized && !auth.isLogout) {
+const SignInPage = ({ location, account, setMessage }) => {
+  if (location.unauthorized && !account.isLogout) {
     location.unauthorized = false;
     setMessage({
       title: "Access error!",
@@ -15,6 +15,6 @@ const SignInPage = ({ location, auth, setMessage }) => {
 };
 
 export default connect(
-  (auth) => auth,
+  (account) => account,
   { setMessage }
 )(SignInPage);

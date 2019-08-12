@@ -30,9 +30,7 @@ class TodoPage extends React.Component {
     this.props.setPaginationAndFetch(newOffset, limit);
   };
 
-  getCurrentPage = (offset, limit) => {
-    return offset / limit + 1;
-  }
+  getCurrentPage = (offset, limit) => offset / limit + 1;
 
   componentDidMount = async () => {
     await this.props.fetchTasks(

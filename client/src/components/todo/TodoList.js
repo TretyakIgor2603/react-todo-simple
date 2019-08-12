@@ -39,6 +39,7 @@ const TodoList = ({
       <Paging
         style={{ marginTop: "24px" }}
         simple
+        hideOnSinglePage={true}
         defaultCurrent={1}
         current={currentPage}
         onChange={(page) => onChangePaging(page)}

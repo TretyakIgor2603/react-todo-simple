@@ -71,6 +71,6 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(
-  ({ auth }) => auth,
+  ({ account }) => account,
   mapDispatchToProps
 )(withRouter(WrappedSignIn));

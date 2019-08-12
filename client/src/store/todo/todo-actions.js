@@ -1,4 +1,5 @@
 import { Base64 } from "js-base64";
+import { calcNewOffset, setLocalTasks } from "./todo-utils";
 
 export const FETCH_DB_TASKS = "FETCH_DB_TASKS";
 export const fetchDBTasks = (offset = 0, limit = 5, term = "") => ({
@@ -15,19 +16,20 @@ export const fetchDBTasks = (offset = 0, limit = 5, term = "") => ({
 
 export const FETCH_LOCAL_TASKS = "FETCH_LOCAL_TASKS";
 export const fetchLocalTasks = (offset = 0, limit = 5, term = "") => {
-  console.log(offset);
   return async (dispatch, getState) => {
-    const tasks = getState().todo.tasks;
+    const { tasks } = getState().todo;
     const tasksFiltered = tasks.filter(({ title }) =>
       title.toLowerCase().includes(term.toLowerCase())
     );
+    const total = term !== "" ? tasksFiltered.length : tasks.length;
+    const newOffset = calcNewOffset(total, offset, limit);
 
     dispatch({
       type: FETCH_LOCAL_TASKS,
       payload: {
-        offset,
-        tasksFiltered: tasksFiltered.slice(offset, offset + limit),
-        total: term !== "" ? tasksFiltered.length : tasks.length
+        total,
+        offset: newOffset,
+        tasksFiltered: tasksFiltered.slice(newOffset, newOffset + limit)
       },
       meta: {
         term,
@@ -42,6 +44,7 @@ export const fetchTasks = (offset, limit, term) => async (
   getState
 ) => {
   const { account, todo } = getState();
+  console.log(account.isAuthorized)
   if (account.isAuthorized) {
     await dispatch(fetchDBTasks(offset, limit, term));
   } else {
@@ -109,12 +112,15 @@ export const toggleDoneTaskFromDB = (id) => ({
   meta: { id }
 });
 
-export const toggleDoneTaskFromLocal = (id) => {
-  setLocalTasks(toggleDoneTaskFunc(getLocalTasks(), id));
-  return {
+export const toggleDoneTaskFromLocal = (id) => async (dispatch, getState) => {
+  const { tasks } = getState().todo;
+  setLocalTasks(
+    tasks.map((task) => (task.id === id ? { ...task, done: !task.done } : task))
+  );
+  return dispatch({
     type: TOGGLE_DONE_TASK,
-    meta: { id }
-  };
+    meta: { id, asPromise: true }
+  });
 };
 
 export const toggleDoneTask = (id) => async (dispatch, getState) => {
@@ -139,7 +145,8 @@ export const removeTaskFromDB = (id) => ({
 
 export const removeTaskFromLocal = (id) => {
   return async (dispatch, getState) => {
-    setLocalTasks(getState().todo.tasks.filter((task) => task.id !== id));
+    const { tasks } = getState().todo;
+    setLocalTasks(tasks.filter((task) => task.id !== id));
     return dispatch({
       type: REMOVE_TASK,
       meta: { id, asPromise: true }
@@ -184,25 +191,10 @@ export const setSearchTerm = (term) => ({
   }
 });
 
-export const toggleDoneTaskFunc = (tasks, id) => {
-  return tasks.map((task) => {
-    if (task.id === id) task.done = !task.done;
-    return task;
-  });
-};
-
-export const setLocalTasks = (tasks = []) => {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-};
-
-export const getLocalTasks = () => {
-  return JSON.parse(localStorage.getItem("tasks")) || [];
-};
-
 export const INIT_LOCAL_STATE = "INIT_LOCAL_STATE";
 export const initLocalState = () => ({
   type: INIT_LOCAL_STATE,
-  payload: getLocalTasks(),
+  payload: JSON.parse(localStorage.getItem("tasks")) || [],
   meta: { asPromise: true }
 });
 

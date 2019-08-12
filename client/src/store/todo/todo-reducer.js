@@ -1,5 +1,6 @@
 import * as todoActions from "./todo-actions";
 import { success } from "redux-saga-requests";
+import { setToggleDoneTask } from "./todo-utils";
 
 const initialState = {
   tasks: [],
@@ -50,7 +51,8 @@ const todoReducer = (state = initialState, action) => {
     case todoActions.TOGGLE_DONE_TASK:
       return {
         ...state,
-        tasks: todoActions.toggleDoneTaskFunc(state.tasks, action.meta.id)
+        tasks: setToggleDoneTask(state.tasks, action.meta.id),
+        tasksFiltered: setToggleDoneTask(state.tasksFiltered, action.meta.id)
       };
 
     case todoActions.REMOVE_TASK:

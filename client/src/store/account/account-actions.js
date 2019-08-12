@@ -51,7 +51,7 @@ export const signInProcess = (data) => async (dispatch) => {
 
 export const SET_STATUS_AUTHORIZED = "SET_STATUS_AUTHORIZED";
 export const checkAuthorized = () => {
-  return { type: SET_STATUS_AUTHORIZED };
+  return { type: SET_STATUS_AUTHORIZED, meta: { asPromise: true } };
 };
 
 export const CHECK_EXIST_EMAIL = "CHECK_EXIST_EMAIL";
