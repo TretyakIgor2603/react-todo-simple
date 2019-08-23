@@ -1,4 +1,5 @@
 import { fetchTasks, saveLocalTasksToDB } from "../todo/todo-actions";
+import { setTokenToLocalStorage, getUserIdFromToken } from "./account-utils";
 
 export const SIGN_IN = "SIGN_IN";
 export const signIn = (data) => ({
@@ -24,7 +25,6 @@ export const signUp = (user) => ({
 
 export const SIGN_OUT = "SIGN_OUT";
 export const signOut = () => {
-  localStorage.removeItem("token");
   return {
     type: SIGN_OUT,
     request: {
@@ -36,16 +36,18 @@ export const signOut = () => {
 };
 
 export const signUpProcess = (user, autoLogin = false) => async (dispatch) => {
-  await dispatch(signUp(user));
+  const { data } = await dispatch(signUp(user));
   if (autoLogin) {
+    await setTokenToLocalStorage(data);
     await dispatch(saveLocalTasksToDB());
     await dispatch(fetchTasks());
   }
 };
 
-export const signInProcess = (data) => async (dispatch) => {
-  await dispatch(signIn(data));
-  await dispatch(fetchUserData());
+export const signInProcess = (formData) => async (dispatch) => {
+  const { data } = await dispatch(signIn(formData));
+  await setTokenToLocalStorage(data);
+  await dispatch(fetchUsers(getUserIdFromToken()));
   await dispatch(saveLocalTasksToDB());
 };
 
@@ -66,21 +68,22 @@ export const checkExistEmail = (email) => ({
 });
 
 // их объединить
-export const FETCH_USER_DATA = "FETCH_USER_DATA";
-export const fetchUserData = () => ({
-  type: FETCH_USER_DATA,
+// export const FETCH_USER_DATA = "FETCH_USER_DATA";
+// export const fetchUserData = () => ({
+//   type: FETCH_USER_DATA,
+//   request: {
+//     url: `/user/`,
+//     method: "get"
+//   },
+//   meta: { asPromise: true }
+// });
+
+export const FETCH_USERS = "FETCH_USERS";
+export const fetchUsers = (userId) => ({
+  type: FETCH_USERS,
   request: {
-    url: `/user/`,
+    url: `/user/${userId}`,
     method: "get"
   },
   meta: { asPromise: true }
-});
-
-export const FETCH_USERS = "FETCH_USERS";
-export const fetchUsers = () => ({
-  type: FETCH_USERS,
-  request: {
-    url: `/user`,
-    method: "get"
-  }
 });

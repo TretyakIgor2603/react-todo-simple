@@ -10,13 +10,10 @@ import { getToken } from "../utils/token";
 
 class App extends React.Component {
   async componentDidMount() {
-    console.log('componentDidMount')
     getToken() && await this.props.checkAuthorized();
-    console.log('compleate componentDidMount')
   }
 
   render() {
-    console.log('render')
     const { account } = this.props;
 
     return (

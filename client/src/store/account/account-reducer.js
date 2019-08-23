@@ -11,8 +11,6 @@ const initialState = {
 const accountReducer = (state = initialState, action) => {
   switch (action.type) {
     case success(accountActions.SIGN_IN):
-      // куда вынести этот setItem? при выполнении reducer сразу обновляется todoPage и fetch-ит таски, без токена
-      localStorage.setItem("token", action.data.token);
       return {
         ...state,
         isAuthorized: true,
@@ -20,8 +18,6 @@ const accountReducer = (state = initialState, action) => {
       };
 
     case success(accountActions.SIGN_UP):
-      // куда вынести этот setItem? при выполнении reducer сразу обновляется todoPage и fetch-ит таски, без токена
-      action.data.token && localStorage.setItem("token", action.data.token);
       return {
         ...state,
         userName: action.data.user.username,
@@ -29,19 +25,21 @@ const accountReducer = (state = initialState, action) => {
       };
 
     case success(accountActions.SIGN_OUT):
+      localStorage.removeItem("token");
       return {
         ...state,
         userName: null,
         isAuthorized: false,
         isLogout: true
-      };
-
-    case success(accountActions.FETCH_USER_DATA):
+			};
+			
+    case success(accountActions.FETCH_USERS):
+      console.log(action.data);
       return {
         ...state,
         user: action.data
-      };
-
+			};
+			
     case accountActions.SET_STATUS_AUTHORIZED:
       return {
         ...state,

@@ -44,7 +44,6 @@ export const fetchTasks = (offset, limit, term) => async (
   getState
 ) => {
   const { account, todo } = getState();
-  console.log(account.isAuthorized)
   if (account.isAuthorized) {
     await dispatch(fetchDBTasks(offset, limit, term));
   } else {
@@ -65,7 +64,7 @@ export const addTasksToDB = (tasks) => ({
 });
 
 export const saveLocalTasksToDB = () => async (dispatch, getState) => {
-  const localTasks = getState().todo.tasks;
+	const localTasks = getState().todo.tasks;
   if (localTasks.length) {
     await dispatch(clearLocalTasks(localTasks));
     await dispatch(addTasksToDB(localTasks));

@@ -4,10 +4,10 @@ import { withRouter } from "react-router-dom";
 import { signOut } from "../../store/account/account-actions";
 
 class SignOutPage extends Component {
-  componentDidMount = async () => {
+  async componentDidMount() {
     await this.props.signOut();
     this.props.history.push("/login");
-  };
+  }
 
   render() {
     return <div>Logout...</div>;
