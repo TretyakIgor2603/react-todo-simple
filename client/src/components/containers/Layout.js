@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { connect } from "react-redux";
 import { Row, Col } from "antd";
+import { checkAuthorized } from "../../store/account/account-actions";
+import { getToken } from "../../utils/token";
 
 const Main = styled.div`
   display: flex;
@@ -10,16 +13,29 @@ const Main = styled.div`
   background-color: rgba(221, 221, 221, 0.03);
 `;
 
-const Layout = (props) => {
+const Layout = ({checkAuthorized, children}) => {
+  const [isLoading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      getToken() && (await checkAuthorized());
+    }
+    fetchData();
+    setLoading(false);
+  }, [checkAuthorized]);
+
   return (
     <Main>
       <Row>
         <Col xs={24} sm={{ span: 18, offset: 4 }} xl={{ span: 8, offset: 8 }}>
-          {props.children}
+          {!isLoading && children}
         </Col>
       </Row>
     </Main>
   );
 };
 
-export default Layout;
+export default connect(
+  null,
+  { checkAuthorized }
+)(Layout);

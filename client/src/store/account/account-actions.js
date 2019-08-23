@@ -1,5 +1,5 @@
 import { fetchTasks, saveLocalTasksToDB } from "../todo/todo-actions";
-import { setTokenToLocalStorage, getUserIdFromToken } from "./account-utils";
+import { setToken, getUserIdFromToken } from "../../utils/token";
 
 export const SIGN_IN = "SIGN_IN";
 export const signIn = (data) => ({
@@ -38,7 +38,7 @@ export const signOut = () => {
 export const signUpProcess = (user, autoLogin = false) => async (dispatch) => {
   const { data } = await dispatch(signUp(user));
   if (autoLogin) {
-    await setTokenToLocalStorage(data);
+    await setToken(data);
     await dispatch(saveLocalTasksToDB());
     await dispatch(fetchTasks());
   }
@@ -46,7 +46,8 @@ export const signUpProcess = (user, autoLogin = false) => async (dispatch) => {
 
 export const signInProcess = (formData) => async (dispatch) => {
   const { data } = await dispatch(signIn(formData));
-  await setTokenToLocalStorage(data);
+  await setToken(data);
+  console.log('success token')
   await dispatch(fetchUsers(getUserIdFromToken()));
   await dispatch(saveLocalTasksToDB());
 };
@@ -66,17 +67,6 @@ export const checkExistEmail = (email) => ({
   },
   meta: { asPromise: true }
 });
-
-// их объединить
-// export const FETCH_USER_DATA = "FETCH_USER_DATA";
-// export const fetchUserData = () => ({
-//   type: FETCH_USER_DATA,
-//   request: {
-//     url: `/user/`,
-//     method: "get"
-//   },
-//   meta: { asPromise: true }
-// });
 
 export const FETCH_USERS = "FETCH_USERS";
 export const fetchUsers = (userId) => ({

@@ -33,6 +33,7 @@ class TodoPage extends React.Component {
   getCurrentPage = (offset, limit) => offset / limit + 1;
 
   componentDidMount = async () => {
+    console.log('componentDidMount fetchTasks')
     await this.props.fetchTasks(
       this.props.offset,
       this.props.limit,

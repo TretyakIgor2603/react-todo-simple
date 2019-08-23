@@ -90,8 +90,8 @@ export const addTaskToLocal = ({ title }) => (dispatch, getState) => {
 export const ADD_TASK_AND_FETCH = "ADD_TASK_AND_FETCH";
 export const addTasksAndFetch = (tasks) => async (dispatch, getState) => {
   const { searchTerm, offset, limit } = getState().todo;
-  const { isAuthenticated } = getState().account;
-  if (isAuthenticated) {
+  const { isAuthorized } = getState().account;
+  if (isAuthorized) {
     await dispatch(addTasksToDB(tasks));
     await dispatch(fetchTasks(offset, limit, searchTerm));
   } else {

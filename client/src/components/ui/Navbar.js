@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+import { connect } from "react-redux";
 
 const Nav = styled.ul`
   display: flex;
@@ -78,4 +79,4 @@ const Navbar = ({ account }) => {
   );
 };
 
-export default Navbar;
+export default connect((account) => account)(Navbar);

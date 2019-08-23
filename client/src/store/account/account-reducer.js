@@ -34,7 +34,6 @@ const accountReducer = (state = initialState, action) => {
 			};
 			
     case success(accountActions.FETCH_USERS):
-      console.log(action.data);
       return {
         ...state,
         user: action.data

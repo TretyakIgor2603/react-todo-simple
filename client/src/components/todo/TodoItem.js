@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { List, Icon, Checkbox, Spin } from "antd";
 import styled from "styled-components";
 
@@ -14,19 +14,19 @@ const CheckboxItem = styled(Checkbox)`
 const spinIcon = <Icon type="loading" style={{ fontSize: "15px" }} spin />;
 
 const TodoItem = ({ id, done, title, onToggleDone, onRemoveTodo }) => {
-	let isMounted = false;
+	let isMounted = useRef(false);
   const [isPending, setPending] = useState(false);
 
   const handleRemoveTodo = (id) => {
     setPending(true);
     onRemoveTodo(id)
-      .then(() => isMounted && setPending(false))
-      .catch(() => isMounted && setPending(false));
+      .then(() => isMounted.current && setPending(false))
+      .catch(() => isMounted.current && setPending(false));
   };
 
   useEffect(() => {
-		isMounted = true;
-    return () => isMounted = false;
+		isMounted.current = true;
+    return () => isMounted.current = false;
   }, []);
 
   return (

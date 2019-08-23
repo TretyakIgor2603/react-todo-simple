@@ -9,8 +9,7 @@ const PrivateRoute = ({
   account,
   ...rest
 }) => {
-  let ComponentToRender = component;
-
+  const ComponentToRender = component;
   return (
     <Route
       {...rest}
