@@ -4,19 +4,44 @@ import Layout from "./containers/Layout";
 import Navbar from "./ui/Navbar";
 import Navigation from "./Navigation";
 import Notification from "./ui/Notification";
+import { getToken } from "../utils/token";
+import { setAuthorizationBearer } from "../store/axios";
+import { setAuthorized } from "../store/account/account-actions";
+import { connect } from "react-redux";
 
 class App extends React.Component {
+  state = {
+    loading: true
+  };
+
+  componentDidMount() {
+    const token = getToken();
+    if (token) {
+      this.props.setAuthorized();
+      setAuthorizationBearer(token);
+    }
+    this.setState({ loading: false });
+  }
+
   render() {
+    const { loading } = this.state;
     return (
-      <BrowserRouter>
-        <Layout>
-          <Navbar />
-          <Navigation />
-          <Notification />
-        </Layout>
-      </BrowserRouter>
+      <>
+        {!loading && (
+          <BrowserRouter>
+            <Layout>
+              <Navbar />
+              <Navigation />
+              <Notification />
+            </Layout>
+          </BrowserRouter>
+        )}
+      </>
     );
   }
 }
 
-export default App;
+export default connect(
+  null,
+  { setAuthorized }
+)(App);

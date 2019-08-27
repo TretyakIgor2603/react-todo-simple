@@ -1,5 +1,6 @@
-import { fetchTasks, saveLocalTasksToDB } from "../todo/todo-actions";
-import { setToken, getUserIdFromToken } from "../../utils/token";
+import { getUserIdFromToken, removeToken } from "../../utils/token";
+import { clearAllTasks, fetchTasks } from "../todo/todo-db-actions";
+import { saveLocalTasksToDB } from "../todo/todo-local-actions";
 
 export const SIGN_IN = "SIGN_IN";
 export const signIn = (data) => ({
@@ -35,25 +36,31 @@ export const signOut = () => {
   };
 };
 
+export const signOutProcess = () => async (dispatch) => {
+  await dispatch(signOut());
+  await dispatch(clearAllTasks());
+  removeToken();
+};
+
 export const signUpProcess = (user, autoLogin = false) => async (dispatch) => {
-  const { data } = await dispatch(signUp(user));
+  await dispatch(signUp(user));
   if (autoLogin) {
-    await setToken(data);
     await dispatch(saveLocalTasksToDB());
     await dispatch(fetchTasks());
   }
 };
 
-export const signInProcess = (formData) => async (dispatch) => {
-  const { data } = await dispatch(signIn(formData));
-  await setToken(data);
-  console.log('success token')
+export const signInProcess = (formData) => async (dispatch, getState) => {
+  const localTasks = getState().todo.tasks;
+  await dispatch(signIn(formData));
   await dispatch(fetchUsers(getUserIdFromToken()));
-  await dispatch(saveLocalTasksToDB());
+  if (localTasks.length) {
+    await dispatch(saveLocalTasksToDB(localTasks));
+  }
 };
 
 export const SET_STATUS_AUTHORIZED = "SET_STATUS_AUTHORIZED";
-export const checkAuthorized = () => {
+export const setAuthorized = () => {
   return { type: SET_STATUS_AUTHORIZED, meta: { asPromise: true } };
 };
 

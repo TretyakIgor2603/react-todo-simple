@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { setMessage } from "../../store/notice/notice-actions";
+import { setMessage } from "../../store/notification/notification-actions";
 import WrappedSignIn from "../auth/SignIn";
 
 const SignInPage = ({ location, account, setMessage }) => {

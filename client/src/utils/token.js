@@ -1,14 +1,22 @@
 import JwtDecode from "jwt-decode";
+import _has from "lodash/fp/has";
 
-export const setToken = ({ token }) => {
-  return new Promise((resolve, reject) => {
-    token && localStorage.setItem("token", token);
-    resolve("Token has been success added to local storage!");
-  });
+export const checkResponseOnToken = (response) => {
+  const isToken =
+    _has("data", response) && _has("token", JSON.parse(response.data));
+  return isToken && JSON.parse(response.data).token;
+};
+
+export const setToken = (token) => {
+  localStorage.setItem("token", token);
 };
 
 export const getToken = () => {
   return localStorage.getItem("token") || null;
+};
+
+export const removeToken = () => {
+  localStorage.removeItem("token");
 };
 
 export const getUserIdFromToken = () => {

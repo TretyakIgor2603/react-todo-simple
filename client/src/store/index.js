@@ -5,12 +5,12 @@ import createSagaMiddleware from "redux-saga";
 import { sagaRequest } from "./sagas";
 import { requestsPromiseMiddleware } from "redux-saga-requests";
 import todo from "./todo/todo-reducer";
-import notice from "./notice/notice-reducer";
+import notification from "./notification/notification-reducer";
 import account from "./account/account-reducer";
 
 const sagaMiddleware = createSagaMiddleware();
 
-const rootReducer = combineReducers({ account, todo, notice });
+const rootReducer = combineReducers({ account, todo, notification });
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(

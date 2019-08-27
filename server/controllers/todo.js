@@ -61,5 +61,9 @@ export const update = (req, res) => {
 };
 
 export const remove = (req, res) => {
-	Task.findByIdAndRemove(req.body.id).then(() => res.sendStatus(200));
+	Task.findByIdAndRemove(req.body.id).then(() =>
+		res
+			.status(200)
+			.send({ status: 'success', message: 'Task has been removed!' })
+	);
 };

@@ -1,4 +1,5 @@
-import * as todoActions from "./todo-actions";
+import * as todoDbActions from "./todo-db-actions";
+import * as todoLocalActions from "./todo-local-actions";
 import { success } from "redux-saga-requests";
 import { setToggleDoneTask } from "./todo-utils";
 
@@ -8,30 +9,38 @@ const initialState = {
   searchTerm: "",
   offset: 0,
   limit: 5,
-  total: 0
+  total: 0,
+  isFetching: false
 };
 
 const todoReducer = (state = initialState, action) => {
   switch (action.type) {
-    case todoActions.INIT_LOCAL_STATE:
+    case todoLocalActions.INIT_LOCAL_STATE:
       return {
         ...state,
         tasks: action.payload
       };
-    case success(todoActions.ADD_TASKS_TO_DB):
-      const payload = action.data.length ? { ...action.data } : action.data;
+
+    case todoDbActions.ADD_TASKS_TO_DB:
       return {
         ...state,
-        tasks: [payload, ...state.tasks]
+        isFetching: true
       };
 
-    case todoActions.ADD_TASK_TO_LOCAL:
+    case success(todoDbActions.ADD_TASKS_TO_DB):
+      return {
+        ...state,
+        tasks: [...action.data, ...state.tasks],
+        isFetching: false
+      };
+
+    case todoLocalActions.ADD_TASK_TO_LOCAL:
       return {
         ...state,
         tasks: [action.payload, ...state.tasks]
       };
 
-    case success(todoActions.FETCH_DB_TASKS):
+    case success(todoDbActions.FETCH_DB_TASKS):
       return {
         ...state,
         searchTerm: action.meta.term,
@@ -39,7 +48,7 @@ const todoReducer = (state = initialState, action) => {
         total: action.data.tasks.total
       };
 
-    case todoActions.FETCH_LOCAL_TASKS:
+    case todoLocalActions.FETCH_LOCAL_TASKS:
       return {
         ...state,
         offset: action.payload.offset,
@@ -48,25 +57,26 @@ const todoReducer = (state = initialState, action) => {
         total: action.payload.total
       };
 
-    case todoActions.TOGGLE_DONE_TASK:
+    case todoDbActions.TOGGLE_DONE_TASK:
       return {
         ...state,
         tasks: setToggleDoneTask(state.tasks, action.meta.id),
         tasksFiltered: setToggleDoneTask(state.tasksFiltered, action.meta.id)
       };
 
-    case todoActions.REMOVE_TASK:
+    case todoDbActions.REMOVE_TASK:
       return {
         ...state,
-        tasks: state.tasks.filter((task) => task.id !== action.meta.id)
+        tasks: state.tasks.filter((task) => task.id !== action.meta.id),
+        total: state.total - 1
       };
 
-    case todoActions.CLEAR_LOCAL_TASKS:
+    case todoDbActions.CLEAR_ALL_TASKS:
       return {
         ...initialState
       };
 
-    case todoActions.SET_PAGINATION:
+    case todoDbActions.SET_PAGINATION:
       return {
         ...state,
         offset: action.payload.offset,

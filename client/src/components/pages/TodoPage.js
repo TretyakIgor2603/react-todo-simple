@@ -3,7 +3,8 @@ import { connect } from "react-redux";
 import { Spin } from "antd";
 import { ErrorBoundary } from "../error/";
 import { TodoAdd, TodoList } from "../todo";
-import * as todoActions from "../../store/todo/todo-actions";
+import * as todoDbActions from "../../store/todo/todo-db-actions";
+import * as todoLocalActions from "../../store/todo/todo-local-actions";
 import SearchPanel from "../ui/SearchPanel";
 
 class TodoPage extends React.Component {
@@ -30,10 +31,13 @@ class TodoPage extends React.Component {
     this.props.setPaginationAndFetch(newOffset, limit);
   };
 
-  getCurrentPage = (offset, limit) => offset / limit + 1;
+  getCurrentPage = (offset, limit, total) => {
+    const maxPage = Math.ceil(total / limit)
+    const currentPage = offset / limit + 1
+    return maxPage < currentPage ? maxPage : currentPage
+  }
 
   componentDidMount = async () => {
-    console.log('componentDidMount fetchTasks')
     await this.props.fetchTasks(
       this.props.offset,
       this.props.limit,
@@ -45,19 +49,18 @@ class TodoPage extends React.Component {
   render() {
     const { loading } = this.state;
     const { account, toggleDoneTask } = this.props;
-    const { tasks, tasksFiltered, total, offset, limit } = this.props.todo;
-
+    const { tasks, tasksFiltered, total, offset, limit, isFetching } = this.props.todo;
     return (
       <ErrorBoundary>
         <TodoAdd onTodoAdd={this.addTask} account={account} />
         <SearchPanel onSearch={this.searchTasks} />
 
-        <Spin tip="Loading..." spinning={loading}>
+        <Spin tip="Loading..." spinning={loading || isFetching}>
           <TodoList
             tasks={account.isAuthorized ? tasks : tasksFiltered}
             limit={limit}
             total={total}
-            currentPage={this.getCurrentPage(offset, limit)}
+            currentPage={this.getCurrentPage(offset, limit, total)}
             onToggleDone={toggleDoneTask}
             onRemoveTodo={this.removeTask}
             onChangePaging={this.setPage}
@@ -73,5 +76,5 @@ export default connect(
     todo: state.todo,
     account: state.account
   }),
-  { ...todoActions }
+  { ...todoDbActions, ...todoLocalActions }
 )(TodoPage);
