@@ -68,7 +68,7 @@ export const CHECK_EXIST_EMAIL = "CHECK_EXIST_EMAIL";
 export const checkExistEmail = (email) => ({
   type: CHECK_EXIST_EMAIL,
   request: {
-    url: `/auth/user-exist`,
+    url: `/auth/email-exist`,
     method: "post",
     data: { email }
   },

@@ -36,7 +36,7 @@ const accountReducer = (state = initialState, action) => {
     case success(accountActions.FETCH_USERS):
       return {
         ...state,
-        user: action.data
+        user: action.data.data
 			};
 			
     case accountActions.SET_STATUS_AUTHORIZED:

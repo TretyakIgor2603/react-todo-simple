@@ -19,9 +19,9 @@ export const validate = method => {
   }
 };
 
-export const userExist = async (req, res) => {
-  const candidate = await User.findOne({ email: req.body.email });
-  candidate
+export const checkExistEmail = async (req, res) => {
+  const user = await User.findOne({ email: req.body.email });
+  user
     ? res.status(409).send({ message: "E-mail is already exist!" })
     : res.status(200).send({ message: "E-mail is free!" });
 };
@@ -29,9 +29,9 @@ export const userExist = async (req, res) => {
 export const register = async function(req, res) {
   const response = {};
   const { username, email, password, autoLogin } = req.body;
-  const candidate = await User.findOne({ email });
+  const user = await User.findOne({ email });
 
-  if (candidate) {
+  if (user) {
     res.status(409).send({
       message: "Email is already exist!"
     });

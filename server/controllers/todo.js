@@ -13,18 +13,17 @@ export const get = async (req, res) => {
 	query.user_id = req.user.id;
 	const tasksTotal = await Task.countDocuments(query);
 
-	Task.find(query)
+	const tasks = await Task.find(query)
 		.skip(+req.query.offset)
 		.limit(+req.query.limit)
-		.sort({ created_at: -1 })
-		.then(async tasks => {
-			res.status(200).send({
-				tasks: {
-					data: tasks,
-					total: tasksTotal
-				}
-			});
-		});
+		.sort({ created_at: -1 });
+	return res.status(200).send({
+		success: true,
+		data: {
+			tasks,
+			total: tasksTotal
+		}
+	});
 };
 
 export const create = async (req, res) => {
@@ -35,35 +34,44 @@ export const create = async (req, res) => {
 			otherProps.user_id = req.user.id;
 			return otherProps;
 		});
-		Task.insertMany(tasksWithUserId, function(error, tasks) {
-			res.status(200).send(tasks);
-		});
+		const tasks = await Task.insertMany(tasksWithUserId);
+		return res.status(200).send({ success: true, data: tasks });
 	} else {
 		const { title } = req.body;
 		const task = new Task({ title, user_id: req.user.id }).save();
-		res.status(200).send(task);
+		return res.status(200).send({ success: true, data: task });
 	}
 };
 
-export const update = (req, res) => {
-	if (req.query.complete) {
-		Task.findById(req.body.id, (err, task) => {
-			if (err) {
-				return res.status(404).send({
-					message: 'Todo was not found!'
-				});
-			} else {
-				task.done = !task.done;
-				task.save().then(() => res.sendStatus(200));
-			}
+export const update = async (req, res) => {
+	const task = req.body;
+	if (task) {
+		const updatedTask = await Task.findByIdAndUpdate(
+			task.id,
+			{ $set: task },
+			{ upsert: true, new: true }
+		);
+		res.status(200).send({
+			success: true,
+			message: 'Task has been successfully updated!',
+			data: updatedTask
 		});
 	}
 };
 
-export const remove = (req, res) => {
-	Task.findByIdAndRemove(req.body.id).then(() =>
-		res
-			.status(200)
-			.send({ status: 'success', message: 'Task has been removed!' })
-	);
+export const remove = async (req, res) => {
+	try {
+		const task = await Task.findByIdAndRemove(req.params.id);
+		if (!task) throw new Error();
+
+		res.status(200).send({
+			success: true,
+			message: 'Task has been successfully removed!'
+		});
+	} catch (e) {
+		res.status(404).send({
+			success: false,
+			message: `Task ${req.params.id} not found!`
+		});
+	}
 };

@@ -16,6 +16,7 @@ const openNotification = (type, title, messages) => {
 
 class Notification extends Component {
   componentDidUpdate() {
+    console.log(this.props)
     const { type, title, messages } = this.props;
     openNotification(type, title, messages);
   }

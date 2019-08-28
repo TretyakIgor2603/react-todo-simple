@@ -59,15 +59,19 @@ export const addTasksAndFetch = (tasks) => async (dispatch, getState) => {
 };
 
 export const TOGGLE_DONE_TASK = "TOGGLE_DONE_TASK";
-export const toggleDoneTaskFromDB = (id) => ({
-  type: TOGGLE_DONE_TASK,
-  request: {
-    url: `/tasks?complete=${id}`,
-    data: { id },
-    method: "put"
-  },
-  meta: { id }
-});
+export const toggleDoneTaskFromDB = (id) => async (dispatch, getState) => {
+  const task = { ...getState().todo.tasks.find((task) => task.id === id) };
+  task.done = !task.done;
+  return dispatch({
+    type: TOGGLE_DONE_TASK,
+    request: {
+      url: `/tasks/${id}`,
+      data: task,
+      method: "put"
+    },
+    meta: { id }
+  });
+};
 
 export const toggleDoneTask = (id) => async (dispatch, getState) => {
   getState().account.isAuthorized
@@ -80,7 +84,6 @@ export const removeTaskFromDB = (id) => ({
   type: REMOVE_TASK,
   request: {
     url: `/tasks/${id}`,
-    data: { id },
     method: "delete"
   },
   meta: {
@@ -94,7 +97,7 @@ export const removeTaskAndFetch = (id) => async (dispatch, getState) => {
   getState().account.isAuthorized
     ? await dispatch(removeTaskFromDB(id))
     : await dispatch(removeTaskFromLocal(id));
-    
+
   const { searchTerm, offset, limit, total } = getState().todo;
   const newOffset = calcNewOffset(total, offset, limit);
   await dispatch(fetchTasks(newOffset, limit, searchTerm));

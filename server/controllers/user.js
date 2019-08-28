@@ -4,10 +4,15 @@ const { User } = models;
 
 export const getUsers = async (req, res) => {
 	if (req.params.id) {
-		let user = await User.findOne({ _id: req.user._id });
-		user
-			? res.status(200).send(user)
-			: res.status(404).send({ message: 'The user is not found!' });
+		try {
+			const user = await User.findOne({ _id: req.params.id });
+			res.status(200).send({ success: true, data: user });
+		} catch (e) {
+			res.status(404).send({
+				success: false,
+				message: 'The user is not found!'
+			});
+		}
 	} else {
 		const users = await User.find();
 		res.status(200).send({ users });

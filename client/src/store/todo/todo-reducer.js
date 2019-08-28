@@ -30,7 +30,7 @@ const todoReducer = (state = initialState, action) => {
     case success(todoDbActions.ADD_TASKS_TO_DB):
       return {
         ...state,
-        tasks: [...action.data, ...state.tasks],
+        tasks: [...action.data.data, ...state.tasks],
         isFetching: false
       };
 
@@ -41,11 +41,12 @@ const todoReducer = (state = initialState, action) => {
       };
 
     case success(todoDbActions.FETCH_DB_TASKS):
+      const { data } = action.data;
       return {
         ...state,
         searchTerm: action.meta.term,
-        tasks: action.data.tasks.data,
-        total: action.data.tasks.total
+        tasks: data.tasks,
+        total: data.total
       };
 
     case todoLocalActions.FETCH_LOCAL_TASKS:

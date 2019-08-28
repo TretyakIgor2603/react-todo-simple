@@ -1,0 +1,320 @@
+{
+	"info": {
+		"_postman_id": "80a33d07-eb55-4a58-a6c4-4b3b9c582dfc",
+		"name": "todo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "http://{{host}}:{{port}}/api/auth/login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\":\"oppopopo@gmail.com\",\n\t\"password\":\"oppopopo\",\n\t\"remember\":true\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://{{host}}:{{port}}/api/auth/logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/api/auth/logout",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://{{host}}:{{port}}/api/auth/register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\":\"test\",\n\t\"email\":\"test@gmail.com\",\n\t\"password\":\"test12345\",\n\t\"confirm\":\"test12345\",\n\t\"autoLogin\":true\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/api/auth/register",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://{{host}}:{{port}}/api/auth/email-exist",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\":\"test@test.com\"\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/api/auth/email-exist",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"auth",
+								"email-exist"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tasks",
+			"item": [
+				{
+					"name": "http://{{host}}:{{port}}/api/tasks?offset=0&limit=5&search=",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/api/tasks?offset=0&limit=5&search=bG9jYWw=",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "search",
+									"value": "bG9jYWw=",
+									"description": "search must be base64 encoded"
+								}
+							]
+						},
+						"description": "Get the first five user tasks"
+					},
+					"response": []
+				},
+				{
+					"name": "http://{{host}}:{{port}}/api/tasks/5d662fe7262f0a6f16b1685a",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"done\":\"false\",\n\t\"title\":\"Local task 1\",\n\t\"user_id\":\"5d5fd4112b5417692a7e06ee\",\n\t\"created_at\":\"2019-08-28T07:40:23.502Z\",\n\t\"updated_at\":\"2019-08-28T09:07:08.055Z\",\n\t\"id\":\"5d662fe7262f0a6f16b1685a\"\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/api/tasks/5d662fe7262f0a6f16b1685a",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"tasks",
+								"5d662fe7262f0a6f16b1685a"
+							]
+						},
+						"description": "Change the task execution status to the opposite"
+					},
+					"response": []
+				},
+				{
+					"name": "http://{{host}}:{{port}}/api/tasks/5d662fe7262f0a6f16b1685a",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/api/tasks/5d6647bd75f39909b004afeb",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"tasks",
+								"5d6647bd75f39909b004afeb"
+							]
+						},
+						"description": "Delete task"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "profile",
+			"item": [
+				{
+					"name": "http://{{host}}:{{port}}/api/user/5d5fd4112b5417692a7e06ee",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/api/user/5d5fd4112b5417692a7e06ee",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"user",
+								"5d5fd4112b5417692a7e06ee"
+							]
+						},
+						"description": "Get user data"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

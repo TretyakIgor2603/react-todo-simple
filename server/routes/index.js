@@ -1,8 +1,12 @@
-// import todoRoutes from "./routes/todo";
-// import authRoutes from "./routes/auth";
-// import userRoutes from "./routes/user";
+import Router from 'express-promise-router';
+import todoRoutes from '../routes/todo';
+import authRoutes from '../routes/auth';
+import userRoutes from '../routes/user';
 
+const routes = Router();
 
-// app.use("/api/tasks", todoRoutes);
-// app.use("/api/auth", authRoutes);
-// app.use("/api/user", userRoutes);
+routes.use('/', todoRoutes);
+routes.use('/', authRoutes);
+routes.use('/', userRoutes);
+
+export default routes;

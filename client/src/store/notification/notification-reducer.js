@@ -24,9 +24,8 @@ const notificationReducer = (state = initialState, action) => {
       if (data && (data.tokenExpiredError || !data.validToken)) {
         console.log("tokenExpiredError && invalidToken");
         signOutProcess();
-        return { ...state, messages: [data] };
       }
-      return state;
+      return { ...state, messages: [data] };
   }
 };
 

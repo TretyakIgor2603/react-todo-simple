@@ -1,17 +1,18 @@
-import * as authController from "../controllers/auth";
-import Router from "express-promise-router";
-import withAuth from "../middleware/auth";
-import { createValidator } from "../middleware/validation";
-import {signInSchema} from '../validation/authorization'
+import Router from 'express-promise-router';
+import withAuth from '../middleware/auth';
+import { createValidator } from '../middleware/validation';
+import * as authController from '../controllers/auth';
+import * as authSchemas from '../validation/authSchemas';
 
 const router = Router();
-const signInMiddleware = createValidator(signInSchema)
+const signInMiddleware = createValidator(authSchemas.signIn);
+const signUpMiddleware = createValidator(authSchemas.signUp);
+const signOutMiddleware = createValidator(authSchemas.signOut);
+const emailExistMiddleware = createValidator(authSchemas.checkExistEmail);
 
-router.post("/user-exist", authController.userExist);
-// router.post("/login", signInMiddleware, authController.login);
-router.post("/login", authController.validate("login"), authController.login);
-router.post("/logout", withAuth, authController.logout);
-router.post("/register", authController.register);
-router.get("/check-token", withAuth, (req, res) => res.sendStatus(200));
+router.post('/auth/login', signInMiddleware, authController.login);
+router.post('/auth/register', signUpMiddleware, authController.register);
+router.post('/auth/logout', signOutMiddleware, withAuth, authController.logout);
+router.post('/auth/email-exist', emailExistMiddleware, authController.checkExistEmail);
 
 export default router;
