@@ -4,7 +4,7 @@ import Layout from "./containers/Layout";
 import Navbar from "./ui/Navbar";
 import Navigation from "./Navigation";
 import Notification from "./ui/Notification";
-import { getToken } from "../utils/token";
+import { getTokenFromLocalStorage } from "../utils/token";
 import { setAuthorizationBearer } from "../store/axios";
 import { setAuthorized } from "../store/account/account-actions";
 import { connect } from "react-redux";
@@ -15,7 +15,7 @@ class App extends React.Component {
   };
 
   componentDidMount() {
-    const token = getToken();
+    const token = getTokenFromLocalStorage();
     if (token) {
       this.props.setAuthorized();
       setAuthorizationBearer(token);

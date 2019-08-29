@@ -1,4 +1,4 @@
-import { getUserIdFromToken, removeToken } from "../../utils/token";
+import { getUserIdFromToken, removeTokenFromLocalStorage } from "../../utils/token";
 import { clearAllTasks, fetchTasks } from "../todo/todo-db-actions";
 import { saveLocalTasksToDB } from "../todo/todo-local-actions";
 
@@ -39,12 +39,12 @@ export const signOut = () => {
 export const signOutProcess = () => async (dispatch) => {
   await dispatch(signOut());
   await dispatch(clearAllTasks());
-  removeToken();
+  removeTokenFromLocalStorage();
 };
 
 export const CLEAR_AUTH = "CLEAR_AUTH";
 export const clearAuth = () => {
-  removeToken();
+  removeTokenFromLocalStorage();
   return {
     type: CLEAR_AUTH
   };
@@ -54,17 +54,13 @@ export const signUpProcess = (user, autoLogin = false) => async (dispatch) => {
   await dispatch(signUp(user));
   if (autoLogin) {
     await dispatch(saveLocalTasksToDB());
-    await dispatch(fetchTasks());
   }
 };
 
 export const signInProcess = (formData) => async (dispatch, getState) => {
-  const localTasks = getState().todo.tasks;
   await dispatch(signIn(formData));
   await dispatch(fetchUsers(getUserIdFromToken()));
-  if (localTasks.length) {
-    await dispatch(saveLocalTasksToDB(localTasks));
-  }
+	await dispatch(saveLocalTasksToDB());
 };
 
 export const SET_STATUS_AUTHORIZED = "SET_STATUS_AUTHORIZED";

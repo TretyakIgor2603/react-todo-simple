@@ -18,7 +18,7 @@ class TodoPage extends React.Component {
   };
 
   searchTasks = async (searchTerm) => {
-    await this.props.fetchTasks(0, this.props.limit, searchTerm);
+    await this.props.fetchTasks(1, this.props.limit, searchTerm);
   };
 
   componentDidMount = async () => {

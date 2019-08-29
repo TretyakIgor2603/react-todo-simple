@@ -7,13 +7,11 @@ import {
   initLocalState
 } from "./todo-local-actions";
 import { calcNewPage } from "./todo-utils";
-// import { calcNewOffset } from "./todo-utils";
 
 export const FETCH_DB_TASKS = "FETCH_DB_TASKS";
 export const fetchDBTasks = (page = 1, perPage = 5, term = "") => ({
   type: FETCH_DB_TASKS,
   request: {
-    // url: `/tasks?offset=${offset}&perPage=${perPage}&search=${Base64.encode(term)}`,
     url: `/tasks?page=${page}&per_page=${perPage}&search=${Base64.encode(
       term
     )}`,
@@ -50,7 +48,7 @@ export const addTasksToDB = (tasks) => ({
 export const ADD_TASK_AND_FETCH = "ADD_TASK_AND_FETCH";
 export const addTasksAndFetch = (tasks) => async (dispatch, getState) => {
   const { searchTerm, page, perPage } = getState().todo;
-  const { isAuthorized } = getState().account;
+	const { isAuthorized } = getState().account;
   if (isAuthorized) {
     await dispatch(addTasksToDB(tasks));
     await dispatch(fetchTasks(page, perPage, searchTerm));

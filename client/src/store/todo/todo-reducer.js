@@ -45,6 +45,7 @@ const todoReducer = (state = initialState, action) => {
       };
 
     case success(todoDbActions.ADD_TASKS_TO_DB):
+			console.log(action)
       return {
         ...state,
         tasks: [...action.data.data, ...state.tasks],

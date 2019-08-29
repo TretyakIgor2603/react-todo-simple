@@ -19,9 +19,8 @@ export const register = async function(req, res) {
     });
   } else {
     const user = await new User({ username, email, password }).save();
-    response.success = true
-    response.data = { user }
-    autoLogin && (response.data.token = await user.generateAuthToken());
+    response.user = user
+    autoLogin && (response.token = await user.generateAuthToken());
     res.status(201).send(response);
   }
 };

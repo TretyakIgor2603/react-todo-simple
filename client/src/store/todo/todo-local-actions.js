@@ -18,14 +18,17 @@ export const fetchLocalTasks = (page = 1, perPage = 5, searchTerm = "") => {
     const total = searchTerm !== "" ? tasksFiltered.length : tasks.length;
     const newPage = calcNewPage(page, perPage, total);
 
-    console.log(newPage)
-  
+    console.log(newPage);
+
     dispatch({
       type: FETCH_LOCAL_TASKS,
       payload: {
         total,
         page: newPage,
-        tasksFiltered: tasksFiltered.slice(page * perPage - perPage, page * perPage)
+        tasksFiltered: tasksFiltered.slice(
+          page * perPage - perPage,
+          page * perPage
+        )
       },
       meta: {
         searchTerm,
@@ -35,14 +38,12 @@ export const fetchLocalTasks = (page = 1, perPage = 5, searchTerm = "") => {
   };
 };
 
-export const saveLocalTasksToDB = (localTasks) => async (
-  dispatch,
-  getState
-) => {
-  const { page, perPage, searchTerm } = getState().todo;
+export const saveLocalTasksToDB = () => async (dispatch, getState) => {
+  const { tasks } = getState().todo;
   await dispatch(clearAllTasks());
-  await dispatch(addTasksToDB(localTasks));
-  await dispatch(fetchTasks(page, perPage, searchTerm));
+  if (tasks.length) {
+    await dispatch(addTasksToDB(tasks));
+  }
 };
 
 export const ADD_TASK_TO_LOCAL = "ADD_TASK_TO_LOCAL";

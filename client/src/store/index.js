@@ -4,10 +4,10 @@ import axiosInstance from "./axios";
 import createSagaMiddleware from "redux-saga";
 import { sagaRequest } from "./sagas";
 import { requestsPromiseMiddleware } from "redux-saga-requests";
+import authMiddleware from "../middleware/auth-middleware";
 import todo from "./todo/todo-reducer";
-import notification from "./notification/notification-reducer";
 import account from "./account/account-reducer";
-import accountMiddleware from "./account/account-interceptor";
+import notification from "./notification/notification-reducer";
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -21,7 +21,7 @@ const store = createStore(
       sagaMiddleware,
       thunk,
       requestsPromiseMiddleware(),
-      accountMiddleware
+      authMiddleware
     )
   )
 );
