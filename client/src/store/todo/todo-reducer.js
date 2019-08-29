@@ -27,7 +27,7 @@ const todoReducer = (state = initialState, action) => {
         ...state,
         tasks: action.payload
       };
-      
+
     case todoLocalActions.ADD_TASK_TO_LOCAL:
       return {
         ...state,
@@ -52,15 +52,17 @@ const todoReducer = (state = initialState, action) => {
 
     case success(todoDbActions.FETCH_DB_TASKS):
       const { data } = action.data;
+      const { term, offset, limit } = action.meta;
       return {
         ...state,
-        searchTerm: action.meta.term,
+        searchTerm: term,
         tasks: data.tasks,
         total: data.total,
+        offset,
+        limit,
         isFetching: false
       };
 
-    
     case todoDbActions.TOGGLE_DONE_TASK:
       return {
         ...state,
