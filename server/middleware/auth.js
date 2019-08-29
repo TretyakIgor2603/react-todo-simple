@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import models from '../models';
-import { body } from 'express-validator';
 import JwtDecode from 'jwt-decode';
 
 const { User } = models;
@@ -35,7 +34,7 @@ const auth = async (req, res, next) => {
 		}
 	} catch (error) {
 		if (error.name === 'TokenExpiredError') {
-			if (req.url === '/logout') {
+			if (req.url.indexOf('logout') !== -1) {
 				const user = await User.findOne({
 					_id: JwtDecode(token).id,
 					'tokens.token': token

@@ -8,10 +8,6 @@ import * as todoLocalActions from "../../store/todo/todo-local-actions";
 import SearchPanel from "../ui/SearchPanel";
 
 class TodoPage extends React.Component {
-  state = {
-    loading: true
-  };
-
   addTask = async (title) => {
     const tasks = [{ title }];
     await this.props.addTasksAndFetch(tasks);
@@ -32,10 +28,10 @@ class TodoPage extends React.Component {
   };
 
   getCurrentPage = (offset, limit, total) => {
-    const maxPage = Math.ceil(total / limit)
-    const currentPage = offset / limit + 1
-    return maxPage < currentPage ? maxPage : currentPage
-  }
+    const maxPage = Math.ceil(total / limit);
+    const currentPage = offset / limit + 1;
+    return maxPage < currentPage ? maxPage : currentPage;
+  };
 
   componentDidMount = async () => {
     await this.props.fetchTasks(
@@ -43,19 +39,25 @@ class TodoPage extends React.Component {
       this.props.limit,
       this.props.searchTerm
     );
-    this.setState({ loading: false });
   };
 
   render() {
-    const { loading } = this.state;
     const { account, toggleDoneTask } = this.props;
-    const { tasks, tasksFiltered, total, offset, limit, isFetching } = this.props.todo;
+    const {
+      tasks,
+      tasksFiltered,
+      total,
+      offset,
+      limit,
+      isFetching
+    } = this.props.todo;
+    console.log(isFetching);
     return (
       <ErrorBoundary>
         <TodoAdd onTodoAdd={this.addTask} account={account} />
         <SearchPanel onSearch={this.searchTasks} />
 
-        <Spin tip="Loading..." spinning={loading || isFetching}>
+        <Spin tip="Loading..." spinning={isFetching}>
           <TodoList
             tasks={account.isAuthorized ? tasks : tasksFiltered}
             limit={limit}

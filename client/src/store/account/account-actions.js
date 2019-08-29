@@ -42,6 +42,14 @@ export const signOutProcess = () => async (dispatch) => {
   removeToken();
 };
 
+export const CLEAR_AUTH = "CLEAR_AUTH";
+export const clearAuth = () => {
+  removeToken();
+  return {
+    type: CLEAR_AUTH
+  };
+};
+
 export const signUpProcess = (user, autoLogin = false) => async (dispatch) => {
   await dispatch(signUp(user));
   if (autoLogin) {

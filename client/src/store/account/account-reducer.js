@@ -23,9 +23,9 @@ const accountReducer = (state = initialState, action) => {
         userName: action.data.user.username,
         isAuthorized: action.data.token ? true : false
       };
-
+    
+    case accountActions.CLEAR_AUTH:
     case success(accountActions.SIGN_OUT):
-      localStorage.removeItem("token");
       return {
         ...state,
         userName: null,

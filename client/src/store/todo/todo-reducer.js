@@ -15,38 +15,23 @@ const initialState = {
 
 const todoReducer = (state = initialState, action) => {
   switch (action.type) {
-    case todoLocalActions.INIT_LOCAL_STATE:
-      return {
-        ...state,
-        tasks: action.payload
-      };
-
+    case todoDbActions.FETCH_DB_TASKS:
     case todoDbActions.ADD_TASKS_TO_DB:
       return {
         ...state,
         isFetching: true
       };
 
-    case success(todoDbActions.ADD_TASKS_TO_DB):
+    case todoLocalActions.INIT_LOCAL_STATE:
       return {
         ...state,
-        tasks: [...action.data.data, ...state.tasks],
-        isFetching: false
+        tasks: action.payload
       };
-
+      
     case todoLocalActions.ADD_TASK_TO_LOCAL:
       return {
         ...state,
         tasks: [action.payload, ...state.tasks]
-      };
-
-    case success(todoDbActions.FETCH_DB_TASKS):
-      const { data } = action.data;
-      return {
-        ...state,
-        searchTerm: action.meta.term,
-        tasks: data.tasks,
-        total: data.total
       };
 
     case todoLocalActions.FETCH_LOCAL_TASKS:
@@ -58,6 +43,24 @@ const todoReducer = (state = initialState, action) => {
         total: action.payload.total
       };
 
+    case success(todoDbActions.ADD_TASKS_TO_DB):
+      return {
+        ...state,
+        tasks: [...action.data.data, ...state.tasks],
+        isFetching: false
+      };
+
+    case success(todoDbActions.FETCH_DB_TASKS):
+      const { data } = action.data;
+      return {
+        ...state,
+        searchTerm: action.meta.term,
+        tasks: data.tasks,
+        total: data.total,
+        isFetching: false
+      };
+
+    
     case todoDbActions.TOGGLE_DONE_TASK:
       return {
         ...state,
@@ -85,7 +88,8 @@ const todoReducer = (state = initialState, action) => {
       };
 
     default:
-      return state;
+      if (action.type.indexOf("ERROR") === -1) return state;
+      return { ...state, isFetching: false };
   }
 };
 

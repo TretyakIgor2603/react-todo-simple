@@ -7,6 +7,7 @@ import { requestsPromiseMiddleware } from "redux-saga-requests";
 import todo from "./todo/todo-reducer";
 import notification from "./notification/notification-reducer";
 import account from "./account/account-reducer";
+import accountMiddleware from "./account/account-interceptor";
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -16,7 +17,12 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   rootReducer,
   composeEnhancers(
-    applyMiddleware(sagaMiddleware, thunk, requestsPromiseMiddleware())
+    applyMiddleware(
+      sagaMiddleware,
+      thunk,
+      requestsPromiseMiddleware(),
+      accountMiddleware
+    )
   )
 );
 
