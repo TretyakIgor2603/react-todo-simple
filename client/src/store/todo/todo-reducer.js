@@ -7,8 +7,8 @@ const initialState = {
   tasks: [],
   tasksFiltered: [],
   searchTerm: "",
-  offset: 0,
-  limit: 5,
+  page: 1,
+  perPage: 5,
   total: 0,
   isFetching: false
 };
@@ -35,12 +35,13 @@ const todoReducer = (state = initialState, action) => {
       };
 
     case todoLocalActions.FETCH_LOCAL_TASKS:
+      const { total, tasksFiltered } = action.payload;
       return {
         ...state,
-        offset: action.payload.offset,
-        searchTerm: action.meta.term,
-        tasksFiltered: action.payload.tasksFiltered,
-        total: action.payload.total
+        total,
+        page: action.payload.page,
+        searchTerm: action.meta.searchTerm,
+        tasksFiltered
       };
 
     case success(todoDbActions.ADD_TASKS_TO_DB):
@@ -52,14 +53,13 @@ const todoReducer = (state = initialState, action) => {
 
     case success(todoDbActions.FETCH_DB_TASKS):
       const { data } = action.data;
-      const { term, offset, limit } = action.meta;
+      const { term, page } = action.meta;
       return {
         ...state,
-        searchTerm: term,
+        page,
         tasks: data.tasks,
         total: data.total,
-        offset,
-        limit,
+        searchTerm: term,
         isFetching: false
       };
 
@@ -85,7 +85,7 @@ const todoReducer = (state = initialState, action) => {
     case todoDbActions.SET_PAGINATION:
       return {
         ...state,
-        offset: action.payload.offset,
+        page: action.payload.page,
         limit: action.payload.limit
       };
 

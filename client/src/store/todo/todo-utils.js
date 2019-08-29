@@ -2,11 +2,9 @@ export const setLocalTasks = (tasks = []) => {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
-export const calcNewOffset = (total, offset, limit) => {
-  const allPages = Math.ceil(total / limit);
-  const currentPage = offset / limit + 1;
-  const newOffset = allPages < currentPage ? offset - limit : offset;
-  return newOffset < 0 ? 0 : newOffset;
+export const calcNewPage = (page, perPage, total) => {
+  const allPages = Math.ceil(total / perPage)
+  return allPages < page ? allPages > 0 ? allPages : 1 : page
 };
 
 export const setToggleDoneTask = (tasks, id) =>

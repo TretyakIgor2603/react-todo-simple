@@ -21,37 +21,24 @@ class TodoPage extends React.Component {
     await this.props.fetchTasks(0, this.props.limit, searchTerm);
   };
 
-  setPage = (page) => {
-    const { limit } = this.props.todo;
-    const newOffset = page * limit - limit;
-    this.props.setPaginationAndFetch(newOffset, limit);
-  };
-
-  getCurrentPage = (offset, limit, total) => {
-    const maxPage = Math.ceil(total / limit);
-    const currentPage = offset / limit + 1;
-    return maxPage < currentPage ? maxPage : currentPage;
-  };
-
   componentDidMount = async () => {
     await this.props.fetchTasks(
-      this.props.offset,
-      this.props.limit,
+      this.props.page,
+      this.props.perPage,
       this.props.searchTerm
     );
   };
 
   render() {
-    const { account, toggleDoneTask } = this.props;
+    const { account, toggleDoneTask, setPaginationAndFetch } = this.props;
     const {
       tasks,
       tasksFiltered,
       total,
-      offset,
-      limit,
+      page,
+      perPage,
       isFetching
     } = this.props.todo;
-    console.log(isFetching);
     return (
       <ErrorBoundary>
         <TodoAdd onTodoAdd={this.addTask} account={account} />
@@ -60,12 +47,12 @@ class TodoPage extends React.Component {
         <Spin tip="Loading..." spinning={isFetching}>
           <TodoList
             tasks={account.isAuthorized ? tasks : tasksFiltered}
-            limit={limit}
+            perPage={perPage}
             total={total}
-            currentPage={this.getCurrentPage(offset, limit, total)}
+            currentPage={page}
             onToggleDone={toggleDoneTask}
             onRemoveTodo={this.removeTask}
-            onChangePaging={this.setPage}
+            onChangePaging={(page) => setPaginationAndFetch(page, perPage)}
           />
         </Spin>
       </ErrorBoundary>

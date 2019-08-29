@@ -87,7 +87,7 @@ export const FETCH_USERS = "FETCH_USERS";
 export const fetchUsers = (userId) => ({
   type: FETCH_USERS,
   request: {
-    url: `/user/${userId}`,
+    url: `/users/${userId}`,
     method: "get"
   },
   meta: { asPromise: true }

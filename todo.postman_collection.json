@@ -218,7 +218,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"done\":\"false\",\n\t\"title\":\"Local task 1\",\n\t\"user_id\":\"5d5fd4112b5417692a7e06ee\",\n\t\"created_at\":\"2019-08-28T07:40:23.502Z\",\n\t\"updated_at\":\"2019-08-28T09:07:08.055Z\",\n\t\"id\":\"5d662fe7262f0a6f16b1685a\"\n}"
+							"raw": "{\n\t\"done\":\"false\",\n\t\"title\":\"Local task\",\n\t\"user_id\":\"5d5fd4112b5417692a7e06ee\",\n\t\"created_at\":\"2019-08-28T07:40:23.502Z\",\n\t\"updated_at\":\"2019-08-28T09:07:08.055Z\",\n\t\"id\":\"5d662fe7262f0a6f16b1685a\"\n}"
 						},
 						"url": {
 							"raw": "http://{{host}}:{{port}}/api/tasks/5d662fe7262f0a6f16b1685a",
@@ -279,7 +279,7 @@
 			"name": "profile",
 			"item": [
 				{
-					"name": "http://{{host}}:{{port}}/api/user/5d5fd4112b5417692a7e06ee",
+					"name": "http://{{host}}:{{port}}/api/users/5d5fd4112b5417692a7e06ee",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -298,7 +298,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://{{host}}:{{port}}/api/user/5d5fd4112b5417692a7e06ee",
+							"raw": "http://{{host}}:{{port}}/api/users/5d5fd4112b5417692a7e06ee",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -306,11 +306,47 @@
 							"port": "{{port}}",
 							"path": [
 								"api",
-								"user",
+								"users",
 								"5d5fd4112b5417692a7e06ee"
 							]
 						},
 						"description": "Get user data"
+					},
+					"response": []
+				},
+				{
+					"name": "http://{{host}}:{{port}}/api/users/",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/api/users/",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"users",
+								""
+							]
+						},
+						"description": "Get all users data"
 					},
 					"response": []
 				}

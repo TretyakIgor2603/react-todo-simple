@@ -1,23 +1,5 @@
 import models from "../models";
-import { body, validationResult } from "express-validator/check";
-
 const { User } = models;
-
-export const validate = method => {
-  switch (method) {
-    case "login": {
-      return [
-        body("email")
-          .if(body("email").exists())
-          .isEmail()
-          .withMessage("Email not valid"),
-        body("password")
-          .exists()
-          .withMessage("Password is required")
-      ];
-    }
-  }
-};
 
 export const checkExistEmail = async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
@@ -37,26 +19,17 @@ export const register = async function(req, res) {
     });
   } else {
     const user = await new User({ username, email, password }).save();
-    response.user = user;
-    autoLogin && (response.token = await user.generateAuthToken());
+    response.success = true
+    response.data = { user }
+    autoLogin && (response.data.token = await user.generateAuthToken());
     res.status(201).send(response);
   }
 };
 
 export const login = async function(req, res) {
-  const { errors } = validationResult(req);
   const { email, password } = req.body;
-
-  try {
-    if (errors && errors.length) {
-      throw errors.errors;
-    } else {
-      const user = await User.findByCredentials(email, password);
-      res.status(200).send({ token: await user.generateAuthToken() });
-    }
-  } catch (errors) {
-    res.status(401).send({ ...errors });
-  }
+  const user = await User.findByCredentials(email, password);
+  res.status(200).send({ token: await user.generateAuthToken() });
 };
 
 export const logout = async function(req, res) {

@@ -1,37 +1,48 @@
 import { Base64 } from "js-base64";
-import { calcNewOffset, setLocalTasks } from "./todo-utils";
-import { clearAllTasks, addTasksToDB, fetchTasks, TOGGLE_DONE_TASK, REMOVE_TASK } from "./todo-db-actions";
+import { setLocalTasks, calcNewPage } from "./todo-utils";
+import {
+  clearAllTasks,
+  addTasksToDB,
+  fetchTasks,
+  TOGGLE_DONE_TASK,
+  REMOVE_TASK
+} from "./todo-db-actions";
 
 export const FETCH_LOCAL_TASKS = "FETCH_LOCAL_TASKS";
-export const fetchLocalTasks = (offset = 0, limit = 5, term = "") => {
+export const fetchLocalTasks = (page = 1, perPage = 5, searchTerm = "") => {
   return async (dispatch, getState) => {
     const { tasks } = getState().todo;
     const tasksFiltered = tasks.filter(({ title }) =>
-      title.toLowerCase().includes(term.toLowerCase())
+      title.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    const total = term !== "" ? tasksFiltered.length : tasks.length;
-    const newOffset = calcNewOffset(total, offset, limit);
+    const total = searchTerm !== "" ? tasksFiltered.length : tasks.length;
+    const newPage = calcNewPage(page, perPage, total);
 
+    console.log(newPage)
+  
     dispatch({
       type: FETCH_LOCAL_TASKS,
       payload: {
         total,
-        offset: newOffset,
-        tasksFiltered: tasksFiltered.slice(newOffset, newOffset + limit)
+        page: newPage,
+        tasksFiltered: tasksFiltered.slice(page * perPage - perPage, page * perPage)
       },
       meta: {
-        term,
+        searchTerm,
         asPromise: true
       }
     });
   };
 };
 
-export const saveLocalTasksToDB = (localTasks) => async (dispatch, getState) => {
-  const { searchTerm, offset, limit } = getState().todo;
+export const saveLocalTasksToDB = (localTasks) => async (
+  dispatch,
+  getState
+) => {
+  const { page, perPage, searchTerm } = getState().todo;
   await dispatch(clearAllTasks());
   await dispatch(addTasksToDB(localTasks));
-  await dispatch(fetchTasks(offset, limit, searchTerm));
+  await dispatch(fetchTasks(page, perPage, searchTerm));
 };
 
 export const ADD_TASK_TO_LOCAL = "ADD_TASK_TO_LOCAL";

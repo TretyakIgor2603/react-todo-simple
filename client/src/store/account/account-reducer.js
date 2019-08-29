@@ -18,10 +18,12 @@ const accountReducer = (state = initialState, action) => {
       };
 
     case success(accountActions.SIGN_UP):
+      const { data } = action.data
+      console.log('data', data)
       return {
         ...state,
-        userName: action.data.user.username,
-        isAuthorized: action.data.token ? true : false
+        userName: data.user.username,
+        isAuthorized: data.token ? true : false
       };
     
     case accountActions.CLEAR_AUTH:

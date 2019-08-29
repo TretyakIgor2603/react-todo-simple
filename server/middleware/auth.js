@@ -5,6 +5,9 @@ import JwtDecode from 'jwt-decode';
 const { User } = models;
 
 const auth = async (req, res, next) => {
+	const data = {};
+
+	// Check exist token in request
 	let token = req.header('Authorization');
 	if (token) {
 		token = token.replace('Bearer ', '');
@@ -14,24 +17,9 @@ const auth = async (req, res, next) => {
 			.send({ message: 'Access denied. No token provided.' });
 	}
 
+	// Check valid token
 	try {
-		const data = jwt.verify(token, process.env.JWT_KEY);
-		try {
-			const user = await User.findOne({
-				_id: data.id,
-				'tokens.token': token
-			});
-			if (!user) {
-				throw new Error();
-			}
-			req.user = user;
-			req.token = token;
-			next();
-		} catch (error) {
-			res.status(401).send({
-				message: 'Not authorized to access this resource. Log in again!'
-			});
-		}
+		data.token = jwt.verify(token, process.env.JWT_KEY);
 	} catch (error) {
 		if (error.name === 'TokenExpiredError') {
 			if (req.url.indexOf('logout') !== -1) {
@@ -53,6 +41,26 @@ const auth = async (req, res, next) => {
 				message: 'Invalid token! Please log in again!'
 			});
 		}
+	}
+
+	// Find user by valid token
+	try {
+		const user = await User.findOne({
+			_id: data.token.id,
+			'tokens.token': token
+		});
+		if (!user) {
+			throw new Error();
+		} else {
+			// Add user and token to request
+			req.user = user;
+			req.token = token;
+			next();
+		}
+	} catch (error) {
+		res.status(401).send({
+			message: 'Not authorized to access this resource. Log in again!'
+		});
 	}
 };
 

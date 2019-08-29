@@ -4,19 +4,24 @@ import { Base64 } from 'js-base64';
 const { Task } = models;
 
 export const get = async (req, res) => {
-	const searchTerm = req.query.search;
-	const query = {};
-	query.title = {
-		$regex: new RegExp(Base64.decode(searchTerm)),
-		$options: 'i'
+	const { page, search } = req.query;
+	const perPage = +req.query.per_page;
+	const skip = +page * perPage - perPage;
+
+	const query = {
+		title: {
+			$regex: new RegExp(Base64.decode(search)),
+			$options: 'i'
+		},
+		user_id: req.user.id
 	};
-	query.user_id = req.user.id;
 	const tasksTotal = await Task.countDocuments(query);
 
 	const tasks = await Task.find(query)
-		.skip(+req.query.offset)
-		.limit(+req.query.limit)
-		.sort({ created_at: -1 });
+		.sort({ created_at: -1 })
+		.skip(skip)
+		.limit(perPage)
+
 	return res.status(200).send({
 		success: true,
 		data: {

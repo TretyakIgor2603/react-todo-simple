@@ -6,33 +6,33 @@ import {
   addTaskToLocal,
   initLocalState
 } from "./todo-local-actions";
-import { calcNewOffset } from "./todo-utils";
+import { calcNewPage } from "./todo-utils";
+// import { calcNewOffset } from "./todo-utils";
 
 export const FETCH_DB_TASKS = "FETCH_DB_TASKS";
-export const fetchDBTasks = (offset = 0, limit = 5, term = "") => ({
+export const fetchDBTasks = (page = 1, perPage = 5, term = "") => ({
   type: FETCH_DB_TASKS,
   request: {
-    url: `/tasks?offset=${offset}&limit=${limit}&search=${Base64.encode(term)}`,
+    // url: `/tasks?offset=${offset}&perPage=${perPage}&search=${Base64.encode(term)}`,
+    url: `/tasks?page=${page}&per_page=${perPage}&search=${Base64.encode(
+      term
+    )}`,
     method: "get"
   },
   meta: {
     term,
-    offset,
-    limit,
+    page,
     asPromise: true
   }
 });
 
-export const fetchTasks = (offset, limit, term) => async (
-  dispatch,
-  getState
-) => {
+export const fetchTasks = (page, perPage, term) => async (dispatch, getState) => {
   const { account, todo } = getState();
   if (account.isAuthorized) {
-    await dispatch(fetchDBTasks(offset, limit, term));
+    await dispatch(fetchDBTasks(page, perPage, term));
   } else {
     !todo.tasks.length && (await dispatch(initLocalState()));
-    await dispatch(fetchLocalTasks(offset, limit, term));
+    await dispatch(fetchLocalTasks(page, perPage, term));
   }
 };
 
@@ -49,14 +49,14 @@ export const addTasksToDB = (tasks) => ({
 
 export const ADD_TASK_AND_FETCH = "ADD_TASK_AND_FETCH";
 export const addTasksAndFetch = (tasks) => async (dispatch, getState) => {
-  const { searchTerm, offset, limit } = getState().todo;
+  const { searchTerm, page, perPage } = getState().todo;
   const { isAuthorized } = getState().account;
   if (isAuthorized) {
     await dispatch(addTasksToDB(tasks));
-    await dispatch(fetchTasks(offset, limit, searchTerm));
+    await dispatch(fetchTasks(page, perPage, searchTerm));
   } else {
     await dispatch(addTaskToLocal(tasks[0]));
-    await dispatch(fetchLocalTasks(offset, limit, searchTerm));
+    await dispatch(fetchLocalTasks(page, perPage, searchTerm));
   }
 };
 
@@ -100,28 +100,28 @@ export const removeTaskAndFetch = (id) => async (dispatch, getState) => {
     ? await dispatch(removeTaskFromDB(id))
     : await dispatch(removeTaskFromLocal(id));
 
-  const { searchTerm, offset, limit, total } = getState().todo;
-  const newOffset = calcNewOffset(total, offset, limit);
-  await dispatch(fetchTasks(newOffset, limit, searchTerm));
+  const { page, perPage, total, searchTerm } = getState().todo;
+  const newPage = calcNewPage(page, perPage, total);
+  await dispatch(fetchTasks(newPage, perPage, searchTerm));
 };
 
 export const SET_PAGINATION = "SET_PAGINATION";
-export const setPagination = (offset = 0, limit = 5) => ({
+export const setPagination = (page = 1, perPage = 5) => ({
   type: SET_PAGINATION,
   payload: {
-    offset,
-    limit
+    page,
+    perPage
   }
 });
 
 export const SET_PAGINATION_AND_FETCH = "SET_PAGINATION_AND_FETCH";
-export const setPaginationAndFetch = (offset, limit) => async (
+export const setPaginationAndFetch = (page, perPage) => async (
   dispatch,
   getState
 ) => {
   const { searchTerm } = getState().todo;
-  await dispatch(setPagination(offset, limit));
-  await dispatch(fetchTasks(offset, limit, searchTerm));
+  await dispatch(setPagination(page, perPage));
+  await dispatch(fetchTasks(page, perPage, searchTerm));
 };
 
 export const SET_SEARCH_TERM = "SET_SEARCH_TERM";

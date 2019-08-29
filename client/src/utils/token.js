@@ -4,7 +4,7 @@ import _has from "lodash/fp/has";
 export const checkResponseOnToken = (response) => {
   const isToken =
     _has("data", response) && _has("token", JSON.parse(response.data));
-  return isToken && JSON.parse(response.data).token;
+  return isToken && JSON.parse(response.data.data).token;
 };
 
 export const setToken = (token) => {
