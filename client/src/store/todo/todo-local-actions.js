@@ -3,9 +3,8 @@ import { setLocalTasks, calcNewPage } from "./todo-utils";
 import {
   clearAllTasks,
   addTasksToDB,
-  fetchTasks,
-  TOGGLE_DONE_TASK,
-  REMOVE_TASK
+  REMOVE_TASK,
+  TOGGLE_DONE_TASK
 } from "./todo-db-actions";
 
 export const FETCH_LOCAL_TASKS = "FETCH_LOCAL_TASKS";

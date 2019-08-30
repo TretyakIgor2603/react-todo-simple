@@ -1,25 +1,30 @@
 import React, { useEffect, useState } from "react";
 import Profile from "../profile/Profile";
 import { connect } from "react-redux";
-import { fetchUsers } from "../../store/account/account-actions";
+import { fetchUser, fetchUsers } from "../../store/account/account-actions";
 import { getUserIdFromToken } from "../../utils/token";
 
 const ProfilePage = (props) => {
-  const { fetchUsers, account: { user } } = props;
+  const {
+    fetchUser,
+    fetchUsers,
+    account: { user, users }
+  } = props;
   const [isFetching, setFetching] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      await fetchUsers(getUserIdFromToken());
+    function fetchData() {
+      fetchUser(getUserIdFromToken());
+      fetchUsers();
     }
     fetchData();
     setFetching(false);
-  }, [fetchUsers]);
+  }, [fetchUser, fetchUsers]);
 
-  return !isFetching ? <Profile user={user} /> : null;
+  return !isFetching ? <Profile user={user} users={users} /> : null;
 };
 
 export default connect(
   (account) => account,
-  { fetchUsers }
+  { fetchUser, fetchUsers }
 )(ProfilePage);

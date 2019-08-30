@@ -1,6 +1,6 @@
 import Router from 'express-promise-router';
-import withAuth from '../middleware/auth';
-import { createValidator } from '../middleware/validation';
+import withAuth from '../middleware/auth-middleware';
+import { createValidator } from '../middleware/validation-middleware';
 import * as authController from '../controllers/auth';
 import * as authSchemas from '../validation/authSchemas';
 

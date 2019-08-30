@@ -35,7 +35,7 @@ const userSchema = new Schema(
 		},
 		role: {
 			type: String,
-			default: 'user'
+			default: 'User'
 		},
 		tokens: [
 			{
@@ -46,8 +46,11 @@ const userSchema = new Schema(
 			}
 		]
 	},
-	{ versionKey: false },
-	{ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
+	{
+		toJSON: { virtuals: true },
+		versionKey: false,
+		timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+	}
 );
 
 userSchema.pre('save', async function(next) {
@@ -67,7 +70,7 @@ userSchema.methods.generateAuthToken = async function() {
 	const user = this;
 	const token = jwt.sign(
 		{
-			id: user._id,
+			id: user.id,
 			email: user.email,
 			role: user.role
 		},

@@ -1,7 +1,7 @@
 import * as todoController from '../controllers/todo';
-import withAuth from '../middleware/auth';
+import withAuth from '../middleware/auth-middleware';
 import Router from 'express-promise-router';
-import { createValidator } from '../middleware/validation';
+import { createValidator } from '../middleware/validation-middleware';
 import * as todoSchemas from '../validation/todoSchemas';
 
 const router = Router();

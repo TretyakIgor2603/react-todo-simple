@@ -1,5 +1,8 @@
-import { getUserIdFromToken, removeTokenFromLocalStorage } from "../../utils/token";
-import { clearAllTasks, fetchTasks } from "../todo/todo-db-actions";
+import {
+  getUserIdFromToken,
+  removeTokenFromLocalStorage
+} from "../../utils/token";
+import { clearAllTasks } from "../todo/todo-db-actions";
 import { saveLocalTasksToDB } from "../todo/todo-local-actions";
 
 export const SIGN_IN = "SIGN_IN";
@@ -59,8 +62,8 @@ export const signUpProcess = (user, autoLogin = false) => async (dispatch) => {
 
 export const signInProcess = (formData) => async (dispatch, getState) => {
   await dispatch(signIn(formData));
-  await dispatch(fetchUsers(getUserIdFromToken()));
-	await dispatch(saveLocalTasksToDB());
+  await dispatch(fetchUser(getUserIdFromToken()));
+  await dispatch(saveLocalTasksToDB());
 };
 
 export const SET_STATUS_AUTHORIZED = "SET_STATUS_AUTHORIZED";
@@ -79,12 +82,36 @@ export const checkExistEmail = (email) => ({
   meta: { asPromise: true }
 });
 
-export const FETCH_USERS = "FETCH_USERS";
-export const fetchUsers = (userId) => ({
-  type: FETCH_USERS,
+export const FETCH_USER = "FETCH_USER";
+export const fetchUser = (userId) => ({
+  type: FETCH_USER,
   request: {
     url: `/users/${userId}`,
     method: "get"
+  }
+});
+
+export const FETCH_USERS = "FETCH_USERS";
+export const fetchUsers = () => ({
+  type: FETCH_USERS,
+  request: {
+    url: `/users/`,
+    method: "get"
+  }
+});
+
+export const REMOVE_USER = "REMOVE_USER";
+export const removeUser = (userId) => ({
+  type: REMOVE_USER,
+  request: {
+    url: `/users/${userId}`,
+    method: "delete"
   },
   meta: { asPromise: true }
 });
+
+export const removeUserAndFetchUsers = (userId) => async (dispatch, getState) => {
+  await dispatch(removeUser(userId));
+  await dispatch(fetchUsers())
+};
+

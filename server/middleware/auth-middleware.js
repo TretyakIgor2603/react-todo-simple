@@ -49,6 +49,7 @@ const auth = async (req, res, next) => {
 			_id: data.token.id,
 			'tokens.token': token
 		});
+		
 		if (!user) {
 			throw new Error();
 		} else {
