@@ -3,7 +3,8 @@ import { success } from "redux-saga-requests";
 
 const initialState = {
   user: {},
-  users: [],
+	users: [],
+	userRoles: [],
   userName: null,
   isLogout: false,
   isAuthorized: false
@@ -45,6 +46,12 @@ const accountReducer = (state = initialState, action) => {
       return {
         ...state,
         users: action.data.users
+			};
+			
+    case success(accountActions.FETCH_USERS_ROLES):
+      return {
+        ...state,
+        userRoles: action.data.roles
 			};
 			
     case accountActions.SET_STATUS_AUTHORIZED:

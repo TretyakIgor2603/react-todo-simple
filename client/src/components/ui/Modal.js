@@ -1,44 +1,30 @@
 import React from "react";
-import { Modal, Button } from "antd";
+import { Modal as ModalAntd, Button } from "antd";
 
-const ModalWrap = (props) => {
-  const showModal = () => {
-    this.setState({
-      visible: true
-    });
-  };
-
+const Modal = ({ isShowing, hide, title, children }) => {
   const handleOk = () => {
-    this.setState({ loading: true });
-    setTimeout(() => {
-      this.setState({ loading: false, visible: false });
-    }, 3000);
+    console.log("handleOk");
   };
 
-  const handleCancel = () => {
-    this.setState({ visible: false });
-  };
-
-  const { visible } = props;
   return (
-    <Modal
-      visible={visible}
-      title="Title"
+    <ModalAntd
+      visible={isShowing}
       onOk={handleOk}
-      onCancel={handleCancel}
+      onCancel={hide}
+      title={title}
       footer={[
-        <Button key="back" onClick={handleCancel}>
+        <Button key="back" onClick={hide}>
           Return
         </Button>,
         // <Button key="submit" type="primary" loading={loading} onClick={this.handleOk}>
-        <Button key="submit" type="primary" onClick={handleOk}>
+        <Button key="submit" type="primary" onClick={hide}>
           Submit
         </Button>
       ]}
     >
-      {props.children}
-    </Modal>
+      {children}
+    </ModalAntd>
   );
 };
 
-export default ModalWrap;
+export default Modal;

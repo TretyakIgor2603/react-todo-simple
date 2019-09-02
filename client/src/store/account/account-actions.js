@@ -100,6 +100,15 @@ export const fetchUsers = () => ({
   }
 });
 
+export const FETCH_USERS_ROLES = "FETCH_USERS_ROLES";
+export const fetchUsersRoles = () => ({
+  type: FETCH_USERS_ROLES,
+  request: {
+    url: `/users/roles/`,
+    method: "get"
+  }
+});
+
 export const REMOVE_USER = "REMOVE_USER";
 export const removeUser = (userId) => ({
   type: REMOVE_USER,
