@@ -8,17 +8,16 @@ export const setAuthorizationBearer = (token) => {
 };
 
 // Function that will be called to refresh authorization
-const refreshAuthLogic = (failedRequest) => {
-  axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("refreshToken")}`;
-  return axiosInstance.post("/auth/refresh-token").then((tokenRefreshResponse) => {
-    failedRequest.response.config.headers['Authorization'] = 'Bearer ' + tokenRefreshResponse.data.accessToken;
-    return Promise.resolve();
-  });
-};
-
-// Instantiate the interceptor (you can chain it as it returns the axios instance)
+// const refreshAuthLogic = (failedRequest) => {
+//   axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("refreshToken")}`;
+//   return axiosInstance.post("/auth/refresh-token").then((tokenRefreshResponse) => {
+//     failedRequest.response.config.headers['Authorization'] = 'Bearer ' + tokenRefreshResponse.data.accessToken;
+//     return Promise.resolve();
+//   });
+// };
 
 const axiosInstance = axios.create();
-createAuthRefreshInterceptor(axiosInstance, refreshAuthLogic);
+// createAuthRefreshInterceptor(axiosInstance, refreshAuthLogic);
+
 
 export default axiosInstance
