@@ -4,9 +4,16 @@ import Layout from "./containers/Layout";
 import Navbar from "./ui/Navbar";
 import Navigation from "./Navigation";
 import Notification from "./ui/Notification";
-import { getTokenFromLocalStorage } from "../utils/token";
+import {
+  getAccessTokenFromLocalStorage,
+  getUserIdFromToken
+} from "../utils/token";
 import { setAuthorizationBearer } from "../store/axios";
-import { setAuthorized } from "../store/account/account-actions";
+import {
+  setAuthorized,
+  fetchUsersRoles,
+  fetchCurrentUser
+} from "../store/account/account-actions";
 import { connect } from "react-redux";
 
 class App extends React.Component {
@@ -14,24 +21,32 @@ class App extends React.Component {
     loading: true
   };
 
-  componentDidMount() {
-    const token = getTokenFromLocalStorage();
-    if (token) {
+  async componentDidMount() {
+    const { fetchUsersRoles, fetchCurrentUser } = this.props;
+    const accessToken = getAccessTokenFromLocalStorage();
+    await fetchUsersRoles();
+    
+    if (accessToken) {
       this.props.setAuthorized();
-      setAuthorizationBearer(token);
+      setAuthorizationBearer(accessToken);
+      await fetchCurrentUser(getUserIdFromToken()).catch(() =>
+        this.setState({ loading: false })
+      );
     }
     this.setState({ loading: false });
   }
 
   render() {
     const { loading } = this.state;
+    const { userRoles } = this.props;
+    
     return (
       <>
         {!loading && (
           <BrowserRouter>
             <Layout>
               <Navbar />
-              <Navigation />
+              <Navigation userRoles={userRoles} />
               <Notification />
             </Layout>
           </BrowserRouter>
@@ -42,6 +57,6 @@ class App extends React.Component {
 }
 
 export default connect(
-  null,
-  { setAuthorized }
+  ({ account }) => account,
+  { setAuthorized, fetchUsersRoles, fetchCurrentUser }
 )(App);

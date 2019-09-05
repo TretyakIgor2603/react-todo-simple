@@ -19,7 +19,7 @@ const taskSchema = new Schema(
 		}
 	},
 	{
-		toJSON: { virtuals: false },
+		toJSON: { virtuals: true },
 		versionKey: false,
 		timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 	}

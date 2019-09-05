@@ -37,6 +37,12 @@ const userSchema = new Schema(
 			type: String,
 			default: 'User'
 		},
+		whitelistIP: [
+			{
+				type: String,
+				required: true
+			}
+		],
 		tokens: [
 			{
 				token: {
@@ -65,20 +71,27 @@ userSchema.pre('save', async function(next) {
 	next();
 });
 
-userSchema.methods.generateAuthToken = async function() {
-	// Generate an auth token for the user
-	const user = this;
-	const token = jwt.sign(
-		{
-			id: user.id,
-			email: user.email,
-			role: user.role
-		},
-		process.env.JWT_KEY,
-		{ expiresIn: 60 * 60 * 12 }
-	);
-	user.tokens = user.tokens.concat({ token });
-	await user.save();
+userSchema.methods.generateAccessToken = async function() {
+	// this = user
+	const { id, email, role } = this;
+
+	const token = jwt.sign({ id, email, role }, process.env.JWT_KEY, {
+		expiresIn: 10
+	});
+
+	return token;
+};
+
+userSchema.methods.generateRefreshToken = async function() {
+	// this = user
+	const { id, email, role } = this;
+
+	const token = jwt.sign({ id, email, role }, process.env.JWT_REFRESH_KEY, {
+		expiresIn: 60 * 60 * 12
+	});
+
+	this.tokens = this.tokens.concat({ token });
+	await this.save();
 	return token;
 };
 

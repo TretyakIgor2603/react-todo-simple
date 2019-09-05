@@ -4,7 +4,7 @@ import JwtDecode from 'jwt-decode';
 
 const { User } = models;
 
-const auth = async (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
 	const data = {};
 
 	// Check exist token in request
@@ -21,35 +21,33 @@ const auth = async (req, res, next) => {
 	try {
 		data.token = jwt.verify(token, process.env.JWT_KEY);
 	} catch (error) {
-		if (error.name === 'TokenExpiredError') {
-			if (req.url.indexOf('logout') !== -1) {
-				const user = await User.findOne({
-					_id: JwtDecode(token).id,
-					'tokens.token': token
-				});
-				user && (req.user = user);
-				return next();
-			}
+		// if (error.name === 'TokenExpiredError') {
+		// 	if (req.url.indexOf('logout') !== -1) {
+		// 		const user = await User.findOne({
+		// 			_id: JwtDecode(token).id,
+		// 			'tokens.token': token
+		// 		});
+		// 		user && (req.user = user);
+		// 		return next();
+		// 	}
 
-			return res.status(401).send({
-				tokenExpiredError: true,
-				message: 'Your token has expired. Please generate a new one'
-			});
-		} else {
-			return res.status(401).send({
-				validToken: false,
-				message: 'Invalid token! Please log in again!'
-			});
-		}
+		return res.status(401).send({
+			expired: true,
+			message: 'Your token has expired. Please generate a new one'
+		});
+		// } else {
+		// 	return res.status(401).send({
+		// 		invalid: true,
+		// 		message: 'Invalid token! Please log in again!'
+		// 	});
+		// }
 	}
-
 	// Find user by valid token
 	try {
 		const user = await User.findOne({
-			_id: data.token.id,
-			'tokens.token': token
+			_id: data.token.id
 		});
-		
+
 		if (!user) {
 			throw new Error();
 		} else {
@@ -65,4 +63,4 @@ const auth = async (req, res, next) => {
 	}
 };
 
-export default auth;
+export default authMiddleware;

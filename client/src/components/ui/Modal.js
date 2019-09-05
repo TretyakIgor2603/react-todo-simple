@@ -1,24 +1,21 @@
 import React from "react";
 import { Modal as ModalAntd, Button } from "antd";
 
-const Modal = ({ isShowing, hide, title, children }) => {
-  const handleOk = () => {
-    console.log("handleOk");
-  };
+const Modal = (props) => {
+  const { visible, onHide, title, children, submitText, onSubmit } = props;
 
   return (
     <ModalAntd
-      visible={isShowing}
-      onOk={handleOk}
-      onCancel={hide}
+      visible={visible}
+      onOk={onSubmit}
+      onCancel={onHide}
       title={title}
       footer={[
-        <Button key="back" onClick={hide}>
-          Return
+        <Button key="back" onClick={onHide}>
+          Cancel
         </Button>,
-        // <Button key="submit" type="primary" loading={loading} onClick={this.handleOk}>
-        <Button key="submit" type="primary" onClick={hide}>
-          Submit
+        <Button key="submit" type="primary" onClick={() => onSubmit()}>
+          {submitText || "Submit"}
         </Button>
       ]}
     >

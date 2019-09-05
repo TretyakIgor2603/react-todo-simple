@@ -5,6 +5,7 @@
   "dependencies": {
     "antd": "^3.20.1",
     "axios": "^0.19.0",
+    "axios-auth-refresh": "^1.0.7",
     "babel-plugin-import": "^1.12.0",
     "customize-cra": "^0.2.14",
     "js-base64": "^2.5.1",
@@ -23,7 +24,8 @@
     "redux-thunk": "^2.3.0",
     "styled-components": "^4.3.2",
     "thunk": "^0.0.1",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "yup": "^0.27.0"
   },
   "scripts": {
     "start": "react-app-rewired start ",

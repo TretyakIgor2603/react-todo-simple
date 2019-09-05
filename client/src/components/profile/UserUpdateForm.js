@@ -1,87 +1,77 @@
-import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Select } from "antd";
+import React from "react";
+import { Form, Input, Select } from "antd";
+import FormItem from "../ui/FormItem";
 const { Option } = Select;
 
-const UserUpdateForm = ({ form, user, userRoles }) => {
-  useEffect(() => {
-    form.setFieldsValue({
-      username: user.username,
-      role: user.role
-    });
+const UserUpdateForm = Form.create({ name: "update_user" })(
+  class extends React.Component {
+    setDataToFields = () => {
+      const { form, user } = this.props;
 
-    return () => {};
-  }, [user]);
+      form.setFieldsValue({
+        username: user.username,
+        role: user.role
+      });
+    };
 
-  const [validateTrigger, setValidateTrigger] = useState();
-  const { getFieldDecorator } = form;
-
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 }
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 }
+    componentDidMount() {
+      this.setDataToFields();
     }
-  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    form.validateFields(async (err, values) => {
-      if (!err) {
-        console.log(values);
-        console.log("Success");
+    componentDidUpdate(prevProps) {
+      if (this.props.user.id !== prevProps.user.id) {
+        this.setDataToFields();
       }
-    });
-    console.log("handleSubmit");
-  };
+    }
 
-  // const handleSelectChange = (value, control) => {
-  //   console.log(value);
-  //   form.setFieldsValue({
-  //     [control]: value
-  //   });
-  // };
+    render() {
+      const { form, userRoles, onFormSubmit } = this.props;
 
-  return (
-    <Form
-      autoComplete={"off"}
-      onSubmit={handleSubmit}
-      {...formItemLayout}
-      className="login-form"
-    >
-      <Form.Item label="Name">
-        {getFieldDecorator("username", {
-          rules: [{ required: true }]
-        })(<Input />)}
-      </Form.Item>
+      const formItemLayout = {
+        labelCol: {
+          xs: { span: 24 },
+          sm: { span: 8 }
+        },
+        wrapperCol: {
+          xs: { span: 24 },
+          sm: { span: 16 }
+        }
+      };
 
-      <Form.Item label="Role">
-        {getFieldDecorator("role", {
-          rules: [{ required: true }]
-        })(
-          <Select>
-            {userRoles.map((item) => (
-              <Select.Option key={item} value={item.toLowerCase()}>
-                {item}
-              </Select.Option>
-            ))}
-          </Select>
-        )}
-      </Form.Item>
+      return (
+        <Form
+          autoComplete={"off"}
+          onSubmit={onFormSubmit}
+          {...formItemLayout}
+          className="login-form"
+        >
+          <FormItem
+            form={form}
+            label={"Name"}
+            name={"username"}
+            validateOptions={[{ required: true }]}
+            control={<Input />}
+          />
 
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Change
-        </Button>
-      </Form.Item>
-    </Form>
-  );
-};
-
-const UserUpdateFormWithForm = Form.create({ name: "update_user" })(
-  UserUpdateForm
+          <FormItem
+            form={form}
+            label={"Role"}
+            name={"role"}
+            validateOptions={[{ required: true }]}
+            control={
+              <Select>
+                {Object.keys(userRoles).map((item) => (
+                  <Option key={item} value={item}>
+                    {item}
+                  </Option>
+                ))}
+              </Select>
+            }
+          />
+        </Form>
+      );
+    }
+  }
 );
 
-export default UserUpdateFormWithForm;
+export default UserUpdateForm;

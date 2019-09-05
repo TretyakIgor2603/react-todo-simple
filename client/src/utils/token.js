@@ -1,18 +1,15 @@
 import JwtDecode from "jwt-decode";
 
-export const setTokenToLocalStorage = (token) => {
-  localStorage.setItem("token", token);
+export const getAccessTokenFromLocalStorage = () => {
+  return localStorage.getItem("accessToken") || null;
 };
 
-export const getTokenFromLocalStorage = () => {
-  return localStorage.getItem("token") || null;
-};
-
-export const removeTokenFromLocalStorage = () => {
-  localStorage.removeItem("token");
+export const removeTokensFromLocalStorage = () => {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
 };
 
 export const getUserIdFromToken = () => {
-  const { id } = JwtDecode(localStorage.getItem("token"));
+  const { id } = JwtDecode(getAccessTokenFromLocalStorage());
   return id;
 };

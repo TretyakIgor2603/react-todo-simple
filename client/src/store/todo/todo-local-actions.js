@@ -17,8 +17,6 @@ export const fetchLocalTasks = (page = 1, perPage = 5, searchTerm = "") => {
     const total = searchTerm !== "" ? tasksFiltered.length : tasks.length;
     const newPage = calcNewPage(page, perPage, total);
 
-    console.log(newPage);
-
     dispatch({
       type: FETCH_LOCAL_TASKS,
       payload: {

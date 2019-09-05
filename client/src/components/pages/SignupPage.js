@@ -1,8 +1,8 @@
 import React from "react";
-import WrappedSignup from "../auth/SignUp";
+import SignUp from "../auth/SignUp";
 
 const SignUpPage = () => {
-  return <WrappedSignup />;
+  return <SignUp />;
 };
 
 export default SignUpPage;

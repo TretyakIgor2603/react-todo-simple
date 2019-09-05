@@ -1,66 +1,106 @@
-import React, { useEffect, useState } from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import {
-  fetchUser,
-  fetchUsers,
-  fetchUsersRoles
+  fetchUserById,
+  fetchCurrentUser,
+  fetchAllUsers,
+  fetchUsersRoles,
+  updateUser
 } from "../../store/account/account-actions";
-import { getUserIdFromToken } from "../../utils/token";
 import { removeUserAndFetchUsers } from "../../store/account/account-actions";
-import useModal from "../helpers/useModal";
 import Modal from "../ui/Modal";
 import UsersTable from "../profile/UsersTable";
-import UserUpdateFormWithForm from "../profile/UserUpdateForm";
+import UserUpdateForm from "../profile/UserUpdateForm";
+import _get from "lodash/fp/get";
 
-const ProfilePage = (props) => {
-  const {
-    fetchUser,
-    fetchUsers,
-    fetchUsersRoles,
-    account: { user, users, userRoles }
-  } = props;
-  const [isFetching, setFetching] = useState(true);
-  const { isShowing, toggle } = useModal();
+class ProfilePage extends Component {
+  state = {
+    isFetching: true,
+    userById: {},
+    isShowModalUpdateUser: false,
+    userUpdateRefForm: null
+  };
 
-  useEffect(() => {
-    function fetchData() {
-      fetchUser(getUserIdFromToken());
-      fetchUsers();
-      fetchUsersRoles();
-    }
-    fetchData();
-    setFetching(false);
-  }, [fetchUser, fetchUsers]);
+  saveFormRef = (formRef) => {
+    this.setState({ userUpdateRefForm: formRef });
+  };
 
-  const handleRemoveUser = async (id) => {
-    console.log(id);
+  handleUpdateUser = async (id) => {
+    const userPayload = await this.props.fetchUserById(id);
+
+    this.setState({ userById: _get("response.data.user", userPayload) });
+    this.setState({ isShowModalUpdateUser: true });
+  };
+
+  handleRemoveUser = async (id) => {
     await removeUserAndFetchUsers(id);
   };
 
-  const handleUpdateUser = (id) => {
-    console.log(id);
-    toggle();
+  submitUpdateUser = () => {
+    const { updateUser, fetchAllUsers } = this.props;
+    const { form } = this.state.userUpdateRefForm.props;
+
+    form.validateFields(async (err, values) => {
+      if (err) {
+        return;
+      }
+      await updateUser({ ...this.state.userById, ...values });
+      await fetchAllUsers();
+
+      this.setState({ isShowModalUpdateUser: false });
+    });
   };
 
-  return !isFetching ? (
-    <>
-      <div>Hello, {user.username}!</div>
-      {/* {user.role === "admin" && <UsersTable users={users} />} */}
-      <UsersTable
-        users={users}
-        currentUser={user}
-        handleRemoveUser={handleRemoveUser}
-        handleUpdateUser={handleUpdateUser}
-      />
+  async componentDidMount() {
+    const { user, userRoles, fetchAllUsers } = this.props;
+    
+    user.role === userRoles.Admin && (await fetchAllUsers());
+    this.setState({ isFetching: false });
+  }
 
-      <Modal isShowing={isShowing} hide={toggle} title={"Update user data"}>
-        <UserUpdateFormWithForm user={user} userRoles={userRoles} />
-      </Modal>
-    </>
-  ) : null;
-};
+  render() {
+    const { userById, isFetching, isShowModalUpdateUser } = this.state;
+    const { user, users, userRoles } = this.props;
+
+    return !isFetching ? (
+      <>
+        <div>Hello, {user.username}!</div>
+        {user.role === userRoles.Admin && (
+          <UsersTable
+            users={users}
+            currentUser={user}
+            onClickRemove={this.handleRemoveUser}
+            onClickUpdate={this.handleUpdateUser}
+          />
+        )}
+
+        <Modal
+          visible={isShowModalUpdateUser}
+          onHide={() => this.setState({ isShowModalUpdateUser: false })}
+          title={"Update user data"}
+          submitText={"Change"}
+          onSubmit={this.submitUpdateUser}
+        >
+          <UserUpdateForm
+            user={userById}
+            userRoles={userRoles}
+            wrappedComponentRef={this.saveFormRef}
+            onFormSubmit={this.submitUpdateUser}
+          />
+        </Modal>
+      </>
+    ) : null;
+  }
+}
 
 export default connect(
-  (account) => account,
-  { fetchUser, fetchUsers, fetchUsersRoles, removeUserAndFetchUsers }
+  ({ account }) => account,
+  {
+    fetchUserById,
+    fetchCurrentUser,
+    fetchAllUsers,
+    fetchUsersRoles,
+    updateUser,
+    removeUserAndFetchUsers
+  }
 )(ProfilePage);

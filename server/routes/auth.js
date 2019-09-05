@@ -14,5 +14,6 @@ router.post('/auth/login', signInMiddleware, authController.login);
 router.post('/auth/register', signUpMiddleware, authController.register);
 router.post('/auth/logout', signOutMiddleware, withAuth, authController.logout);
 router.post('/auth/email-exist', emailExistMiddleware, authController.checkExistEmail);
+router.post('/auth/refresh-token', authController.refreshToken);
 
 export default router;

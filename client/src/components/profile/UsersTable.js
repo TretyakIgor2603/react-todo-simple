@@ -1,14 +1,9 @@
 import React from "react";
 import { Table, Icon } from "antd";
 
-const dateToLocaleString = (date) => new Date(date).toLocaleString() || ""
+const dateToLocaleString = (date) => new Date(date).toLocaleString() || "";
 
-const UsersTable = ({
-  currentUser,
-  users,
-  handleUpdateUser,
-  handleRemoveUser
-}) => {
+const UsersTable = ({ currentUser, users, onClickUpdate, onClickRemove }) => {
   const columns = [
     {
       title: "Name",
@@ -38,11 +33,10 @@ const UsersTable = ({
       align: "center",
       render: (text, record) => (
         <span>
-          {console.log("record", record)}
-          <Icon onClick={() => handleUpdateUser(record.id)} type="edit" />
+          <Icon onClick={() => onClickUpdate(record.id)} type="edit" />
           {record.id !== currentUser.id && (
             <Icon
-              onClick={() => handleRemoveUser(record.id)}
+              onClick={() => onClickRemove(record.id)}
               style={{ marginLeft: "10px" }}
               type="delete"
             />

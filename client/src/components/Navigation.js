@@ -7,7 +7,7 @@ import SignInPage from "./pages/SignInPage";
 import SignOutPage from "./pages/SignOutPage";
 import ProfilePage from "./pages/ProfilePage";
 
-const Navigation = () => {
+const Navigation = ({ userRoles }) => {
   return (
     <Switch>
       <Route path="/" exact component={TodoPage} />
@@ -16,11 +16,20 @@ const Navigation = () => {
       <PrivateRoute isGuest={true} path="/login" component={SignInPage} />
 
       <PrivateRoute isLogged={true} path="/logout" component={SignOutPage} />
+
       <PrivateRoute
         isLogged={true}
         exact
         path="/profile"
         component={ProfilePage}
+      />
+
+      <PrivateRoute
+        exact
+        isLogged={true}
+        roles={[userRoles.Admin]}
+        path="/admin"
+        component={() => <div>ADMIN PAGE</div>}
       />
 
       <Route

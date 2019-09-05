@@ -5,19 +5,25 @@ import { Route, Redirect, withRouter } from "react-router-dom";
 const PrivateRoute = ({
   isGuest = false,
   isLogged = false,
+  withRole,
   component,
-  account,
+  isAuthorized,
+  user,
+  roles,
   ...rest
 }) => {
   const ComponentToRender = component;
+
   return (
     <Route
       {...rest}
       render={(props) => {
-        if (
-          (isLogged && account.isAuthorized) ||
-          (isGuest && !account.isAuthorized)
-        ) {
+        if (user.role && roles && roles.indexOf(user.role === -1)) {
+          // role not authorised so redirect to home page
+          return <Redirect to={{ pathname: '/'}} />
+        }
+
+        if ((isLogged && isAuthorized) || (isGuest && !isAuthorized)) {
           return <ComponentToRender {...props} />;
         } else {
           return (
@@ -37,4 +43,4 @@ const PrivateRoute = ({
   );
 };
 
-export default withRouter(connect((account) => account)(PrivateRoute));
+export default withRouter(connect(({ account }) => account)(PrivateRoute));

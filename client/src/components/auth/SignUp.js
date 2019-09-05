@@ -1,8 +1,12 @@
 import React, { Component } from "react";
 import { Form, Icon, Input, Button, Tooltip, Checkbox } from "antd";
 import { connect } from "react-redux";
-import { checkExistEmail, signUpProcess } from "../../store/account/account-actions";
+import {
+  checkExistEmail,
+  signUpProcess
+} from "../../store/account/account-actions";
 import { withRouter } from "react-router-dom";
+import FormItem from "../ui/FormItem";
 
 class SignUp extends Component {
   state = {
@@ -44,10 +48,14 @@ class SignUp extends Component {
   };
 
   validateToUniqueEmail = (rule, value, callback) => {
-    this.props
-      .checkExistEmail(value)
-      .then(() => callback())
-      .catch(() => callback("This email is exist!"));
+    if (value && value !== "") {
+      this.props
+        .checkExistEmail(value)
+        .then(() => callback())
+        .catch(() => callback("This email is exist!"));
+    } else {
+      callback()
+    }
   };
 
   render() {
@@ -85,7 +93,8 @@ class SignUp extends Component {
         {...formItemLayout}
         className="login-form"
       >
-        <Form.Item
+        <FormItem
+          form={this.props.form}
           label={
             <span>
               Name&nbsp;
@@ -94,46 +103,54 @@ class SignUp extends Component {
               </Tooltip>
             </span>
           }
+          name={"username"}
+          validateOptions={[{ required: true, min: 3 }]}
           hasFeedback
-        >
-          {getFieldDecorator("username", {
-            rules: [{ required: true, min: 3 }]
-          })(<Input />)}
-        </Form.Item>
+          control={<Input />}
+        />
 
-        <Form.Item label="E-mail" hasFeedback>
-          {getFieldDecorator("email", {
-            validateTrigger,
-            rules: [
-              { type: "email", required: true },
-              { validator: this.validateToUniqueEmail }
-            ]
-          })(<Input />)}
-        </Form.Item>
+        <FormItem
+          form={this.props.form}
+          label={"E-mail"}
+          name={"email"}
+          validateTrigger={validateTrigger}
+          validateOptions={[
+            { type: "email", required: true },
+            { validator: this.validateToUniqueEmail }
+          ]}
+          hasFeedback
+          control={<Input />}
+        />
 
-        <Form.Item label="Password" hasFeedback>
-          {getFieldDecorator("password", {
-            validateTrigger,
-            rules: [
-              {
-                required: true,
-                min: 5,
-                max: 24
-              },
-              { validator: this.validateToNextPassword }
-            ]
-          })(<Input.Password onBlur={this.handleConfirmBlur} />)}
-        </Form.Item>
+        <FormItem
+          form={this.props.form}
+          label={"Password"}
+          name={"password"}
+          validateTrigger={validateTrigger}
+          validateOptions={[
+            {
+              required: true,
+              min: 5,
+              max: 24
+            },
+            { validator: this.validateToNextPassword }
+          ]}
+          hasFeedback
+          control={<Input.Password onBlur={this.handleConfirmBlur} />}
+        />
 
-        <Form.Item label="Confirm Password" hasFeedback>
-          {getFieldDecorator("confirm", {
-            validateTrigger,
-            rules: [
-              { required: true },
-              { validator: this.compareToFirstPassword }
-            ]
-          })(<Input.Password onBlur={this.handleConfirmBlur} />)}
-        </Form.Item>
+        <FormItem
+          form={this.props.form}
+          label={"Confirm Password"}
+          name={"confirm"}
+          validateTrigger={validateTrigger}
+          validateOptions={[
+            { required: true },
+            { validator: this.compareToFirstPassword }
+          ]}
+          hasFeedback
+          control={<Input.Password onBlur={this.handleConfirmBlur} />}
+        />
 
         <Form.Item {...tailFormItemLayout}>
           <div>
@@ -151,8 +168,6 @@ class SignUp extends Component {
   }
 }
 
-const WrappedSignUp = Form.create({ name: "sign_up" })(SignUp);
-
 const mapActionsToProps = (dispatch) => ({
   checkExistEmail: (email) => dispatch(checkExistEmail(email)),
   signUpProcess: (user, autoLogin) => dispatch(signUpProcess(user, autoLogin))
@@ -161,4 +176,4 @@ const mapActionsToProps = (dispatch) => ({
 export default connect(
   ({ account }) => account,
   mapActionsToProps
-)(withRouter(WrappedSignUp));
+)(withRouter(Form.create({ name: "sign_up" })(SignUp)));

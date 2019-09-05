@@ -1,9 +1,19 @@
 import {
   getUserIdFromToken,
-  removeTokenFromLocalStorage
+  removeTokensFromLocalStorage
 } from "../../utils/token";
 import { clearAllTasks } from "../todo/todo-db-actions";
 import { saveLocalTasksToDB } from "../todo/todo-local-actions";
+
+export const REFRESH_TOKEN = "REFRESH_TOKEN";
+export const refreshTokenAction = () => ({
+  type: REFRESH_TOKEN,
+  request: {
+    url: `/auth/refresh-token`,
+    method: "post"
+  },
+  meta: { asPromise: true }
+});
 
 export const SIGN_IN = "SIGN_IN";
 export const signIn = (data) => ({
@@ -42,12 +52,12 @@ export const signOut = () => {
 export const signOutProcess = () => async (dispatch) => {
   await dispatch(signOut());
   await dispatch(clearAllTasks());
-  removeTokenFromLocalStorage();
+  removeTokensFromLocalStorage();
 };
 
 export const CLEAR_AUTH = "CLEAR_AUTH";
 export const clearAuth = () => {
-  removeTokenFromLocalStorage();
+  removeTokensFromLocalStorage();
   return {
     type: CLEAR_AUTH
   };
@@ -62,7 +72,11 @@ export const signUpProcess = (user, autoLogin = false) => async (dispatch) => {
 
 export const signInProcess = (formData) => async (dispatch, getState) => {
   await dispatch(signIn(formData));
-  await dispatch(fetchUser(getUserIdFromToken()));
+  const { userRoles } = getState().account;
+  if (userRoles === null) {
+    await dispatch(fetchUsersRoles());
+  }
+  await dispatch(fetchCurrentUser(getUserIdFromToken()));
   await dispatch(saveLocalTasksToDB());
 };
 
@@ -82,22 +96,34 @@ export const checkExistEmail = (email) => ({
   meta: { asPromise: true }
 });
 
-export const FETCH_USER = "FETCH_USER";
-export const fetchUser = (userId) => ({
-  type: FETCH_USER,
-  request: {
-    url: `/users/${userId}`,
-    method: "get"
-  }
-});
-
-export const FETCH_USERS = "FETCH_USERS";
-export const fetchUsers = () => ({
-  type: FETCH_USERS,
+export const FETCH_ALL_USERS = "FETCH_ALL_USERS";
+export const fetchAllUsers = () => ({
+  type: FETCH_ALL_USERS,
   request: {
     url: `/users/`,
     method: "get"
-  }
+  },
+  meta: { asPromise: true }
+});
+
+export const FETCH_CURRENT_USER = "FETCH_CURRENT_USER";
+export const fetchCurrentUser = (userId) => ({
+  type: FETCH_CURRENT_USER,
+  request: {
+    url: `/users/${userId}`,
+    method: "get"
+  },
+  meta: { asPromise: true }
+});
+
+export const FETCH_USER_BY_ID = "FETCH_USER_BY_ID";
+export const fetchUserById = (userId) => ({
+  type: FETCH_USER_BY_ID,
+  request: {
+    url: `/users/${userId}`,
+    method: "get"
+  },
+  meta: { asPromise: true }
 });
 
 export const FETCH_USERS_ROLES = "FETCH_USERS_ROLES";
@@ -106,7 +132,8 @@ export const fetchUsersRoles = () => ({
   request: {
     url: `/users/roles/`,
     method: "get"
-  }
+  },
+  meta: { asPromise: true }
 });
 
 export const REMOVE_USER = "REMOVE_USER";
@@ -119,8 +146,23 @@ export const removeUser = (userId) => ({
   meta: { asPromise: true }
 });
 
-export const removeUserAndFetchUsers = (userId) => async (dispatch, getState) => {
+export const removeUserAndFetchUsers = (userId) => async (
+  dispatch,
+  getState
+) => {
   await dispatch(removeUser(userId));
-  await dispatch(fetchUsers())
+  await dispatch(fetchAllUsers());
 };
+
+export const UPDATE_USER = "UPDATE_USER";
+export const updateUser = (user) => ({
+  type: UPDATE_USER,
+  request: {
+    url: `/users/${user.id}`,
+    data: user,
+    method: "put"
+  },
+  meta: { asPromise: true }
+});
+
 

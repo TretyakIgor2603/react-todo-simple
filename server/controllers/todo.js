@@ -20,7 +20,7 @@ export const get = async (req, res) => {
 	const tasks = await Task.find(query)
 		.sort({ created_at: -1 })
 		.skip(skip)
-		.limit(perPage)
+		.limit(perPage);
 
 	return res.status(200).send({
 		success: true,
@@ -31,24 +31,16 @@ export const get = async (req, res) => {
 	});
 };
 
-export const create = async (req, res) => {
-	if (req.body.length) {
-		const reqTasks = req.body;
-		const tasksWithUserId = reqTasks.map(task => {
-			const { id, ...otherProps } = task;
-			otherProps.user_id = req.user.id;
-			return otherProps;
-		});
-		const tasks = await Task.insertMany(tasksWithUserId);
-		return res.status(200).send({ success: true, data: tasks });
-	} else {
-		const { title } = req.body;
-		const task = new Task({ title, user_id: req.user.id }).save();
-		return res.status(200).send({ success: true, data: task });
-	}
+export const insert = async (req, res) => {
+	// req.body - request tasks
+	const tasksWithUserId = req.body.map(task => {
+		return { ...task, user_id: req.user.id };
+	});
+	const tasks = await Task.insertMany(tasksWithUserId);
+	return res.status(200).send({ success: true, data: tasks });
 };
 
-export const update = async (req, res) => {
+export const updateOne = async (req, res) => {
 	const task = req.body;
 	if (task) {
 		const updatedTask = await Task.findByIdAndUpdate(
@@ -64,7 +56,7 @@ export const update = async (req, res) => {
 	}
 };
 
-export const remove = async (req, res) => {
+export const removeOne = async (req, res) => {
 	try {
 		const task = await Task.findByIdAndRemove(req.params.id);
 		if (!task) throw new Error();
