@@ -4,10 +4,7 @@ import Layout from "./containers/Layout";
 import Navbar from "./ui/Navbar";
 import Navigation from "./Navigation";
 import Notification from "./ui/Notification";
-import {
-  getAccessTokenFromLocalStorage,
-  getUserIdFromToken
-} from "../utils/token";
+import TokenService from "../utils/token";
 import { setAuthorizationBearer } from "../store/axios";
 import {
   setAuthorized,
@@ -23,13 +20,14 @@ class App extends React.Component {
 
   async componentDidMount() {
     const { fetchUsersRoles, fetchCurrentUser } = this.props;
-    const accessToken = getAccessTokenFromLocalStorage();
+    const accessToken = TokenService.getAccessToken();
     await fetchUsersRoles();
-    
+
     if (accessToken) {
       this.props.setAuthorized();
       setAuthorizationBearer(accessToken);
-      await fetchCurrentUser(getUserIdFromToken()).catch(() =>
+      const userId = TokenService.getUserIdFromToken();
+      await fetchCurrentUser(userId).catch(() =>
         this.setState({ loading: false })
       );
     }
@@ -39,7 +37,7 @@ class App extends React.Component {
   render() {
     const { loading } = this.state;
     const { userRoles } = this.props;
-    
+
     return (
       <>
         {!loading && (

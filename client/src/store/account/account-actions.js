@@ -1,7 +1,4 @@
-import {
-  getUserIdFromToken,
-  removeTokensFromLocalStorage
-} from "../../utils/token";
+import TokenService from "../../utils/token";
 import { clearAllTasks } from "../todo/todo-db-actions";
 import { saveLocalTasksToDB } from "../todo/todo-local-actions";
 
@@ -52,12 +49,12 @@ export const signOut = () => {
 export const signOutProcess = () => async (dispatch) => {
   await dispatch(signOut());
   await dispatch(clearAllTasks());
-  removeTokensFromLocalStorage();
+  TokenService.clearAllTokens();
 };
 
 export const CLEAR_AUTH = "CLEAR_AUTH";
 export const clearAuth = () => {
-  removeTokensFromLocalStorage();
+  TokenService.clearAllTokens();
   return {
     type: CLEAR_AUTH
   };
@@ -76,7 +73,8 @@ export const signInProcess = (formData) => async (dispatch, getState) => {
   if (userRoles === null) {
     await dispatch(fetchUsersRoles());
   }
-  await dispatch(fetchCurrentUser(getUserIdFromToken()));
+  const userId = TokenService.getUserIdFromToken();
+  await dispatch(fetchCurrentUser(userId));
   await dispatch(saveLocalTasksToDB());
 };
 
@@ -164,5 +162,3 @@ export const updateUser = (user) => ({
   },
   meta: { asPromise: true }
 });
-
-
